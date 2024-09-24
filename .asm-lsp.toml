@@ -1,0 +1,20 @@
+version = "0.1"
+
+[assemblers]
+gas = false 
+go = false
+z80 = false
+masm = false
+nasm = true 
+
+[instruction_sets]
+x86 = true 
+x86_64 = true
+z80 = false
+arm = false
+riscv = false
+
+[opts]
+compiler = "asm"
+diagnostics = true
+default_diagnostics = true

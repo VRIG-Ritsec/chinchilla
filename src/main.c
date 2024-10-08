@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "paging.h"
 #include "printf.h"
 
 typedef uint8_t u8;
@@ -25,8 +26,9 @@ void write_string( int colour, const char *string )
 
 extern void outb(unsigned short port, unsigned char val);
 extern unsigned char inb(unsigned short port);
+extern void enable_pae();
 
-static int init_serial() {
+int init_serial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts
    outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
    outb(PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
@@ -56,5 +58,8 @@ static int init_serial() {
 
 int main(){
     init_serial();
+    enable_pae();
+    void * pgdir = init_page_table();
     printf("HELLO WORLD");
+    return 0;
 }

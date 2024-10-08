@@ -28,6 +28,10 @@ SECTIONS {
         *(.bss)
     }
 
+    page_table_start = ALIGN(5k);
+    . += 0x10000;
+    page_table_end = ALIGN(4k);
+
     /* Creates a stack */ 
     . += 0x4000;
     stack_top = .;

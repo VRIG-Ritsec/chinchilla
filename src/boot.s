@@ -63,3 +63,11 @@ outb:
     out dx, al
     ret
 
+global enable_pae
+enable_pae:
+    mov eax, cr4
+    or eax, 1 << 5 
+    mov cr4, eax
+global die
+die:
+    hlt

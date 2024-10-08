@@ -1,0 +1,47 @@
+[
+  {
+    "arguments": [
+      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "-c",
+      "-I",
+      "include",
+      "-ffreestanding",
+      "-o",
+      "build/printf.o",
+      "src/printf.c"
+    ],
+    "directory": "/home/ex/ctf/vrig/sharad_os",
+    "file": "/home/ex/ctf/vrig/sharad_os/src/printf.c",
+    "output": "/home/ex/ctf/vrig/sharad_os/build/printf.o"
+  },
+  {
+    "arguments": [
+      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "-c",
+      "-I",
+      "include",
+      "-ffreestanding",
+      "-o",
+      "build/paging.o",
+      "src/paging.c"
+    ],
+    "directory": "/home/ex/ctf/vrig/sharad_os",
+    "file": "/home/ex/ctf/vrig/sharad_os/src/paging.c",
+    "output": "/home/ex/ctf/vrig/sharad_os/build/paging.o"
+  },
+  {
+    "arguments": [
+      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "-c",
+      "-I",
+      "include",
+      "-ffreestanding",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/ex/ctf/vrig/sharad_os",
+    "file": "/home/ex/ctf/vrig/sharad_os/src/main.c",
+    "output": "/home/ex/ctf/vrig/sharad_os/build/main.o"
+  }
+]

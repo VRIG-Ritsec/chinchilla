@@ -22,6 +22,7 @@ section .text
 global _start
 _start:
     mov esp, stack_top
+    push ebx ; this is a multiboot_info_t structure referenced in documentation for multiboot
     ; Disable paging
     mov eax, cr0
     

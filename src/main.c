@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include "paging.h"
+#include "multiboot.h"
+#include "kernel32.h"
 #include "printf.h"
+
 
 typedef uint8_t u8;
 typedef uint32_t u32;
@@ -56,7 +59,7 @@ int init_serial() {
 }
 
 
-int main(){
+int main(multiboot_info_t* multiboot_info){
     init_serial();
     enable_pae();
     void * pgdir = init_page_table();

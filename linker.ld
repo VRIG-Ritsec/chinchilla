@@ -28,7 +28,7 @@ SECTIONS {
         *(.bss)
     }
 
-    page_table_start = ALIGN(5k);
+    page_table_start = ALIGN(4k);
     . += 0x10000;
     page_table_end = ALIGN(4k);
 

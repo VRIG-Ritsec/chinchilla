@@ -7,7 +7,7 @@ ENTRY(_start)
    kernel image. */
 SECTIONS
 {
-	. = 2M;    // Load the 64 bit kernel at 2M
+	. = 2M;    /* Load the 64 bit kernel at 2M */
 
     /* 
     * Puts the entrypoint code at the start of the ELF everytime as the compiler 

@@ -28,9 +28,9 @@ GDT_LONG_MODE     equ 1 << (1 + 4)
 
 
 ; Random bits 
-PG_BIT equ         31 
 PAE_BIT equ        5
 LME_BIT equ        8 ; long mode enable
+PG_BIT equ         31 
 
 ; MSR
 EFER_MSR equ       0xC0000080
@@ -142,7 +142,6 @@ Realm64:
     mov fs, ax                    ; Set the F-segment to the A-register.
     mov gs, ax                    ; Set the G-segment to the A-register.
     mov ss, ax                    ; Set the stack segment to the A-register.
-    rep stosq                     ; Clear the screen.
     mov rax, KERNEL64_ENTRY       ; Load the 64 bit kernel entry and jmp
     jmp rax
 

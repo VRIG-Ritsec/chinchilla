@@ -143,7 +143,7 @@ Realm64:
     mov gs, ax                    ; Set the G-segment to the A-register.
     mov ss, ax                    ; Set the stack segment to the A-register.
     rep stosq                     ; Clear the screen.
-    mov rax, 0x200000 
+    mov rax, KERNEL64_ENTRY       ; Load the 64 bit kernel entry and jmp
     jmp rax
 
 

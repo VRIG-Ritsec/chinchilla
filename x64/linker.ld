@@ -7,11 +7,13 @@ ENTRY(_start)
    kernel image. */
 SECTIONS
 {
-	. = 2M;
+	. = 2M;    // Load the 64 bit kernel at 2M
 
-	/* First put the multiboot header, as it is required to be put very early
-	   in the image or the bootloader won't recognize the file format.
-	   Next we'll put the .text section. */
+    /* 
+    * Puts the entrypoint code at the start of the ELF everytime as the compiler 
+    *  can put .text anywhere. This ensures that the first chunk of code at the 
+    *  0 offset is out entry code that jumps to main64
+    */
     .entry BLOCK(4K) : ALIGN(4K)
     {
         *(.entry)

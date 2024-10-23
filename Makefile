@@ -1,8 +1,8 @@
 SRC_DIR = src
 OUT_DIR = build
 
-TOOLCHAIN32 =  /home/ex/ctf/vrig/sharad_os/toolchain/i686/bin
-TOOLCHAIN64 =  /home/ex/ctf/vrig/sharad_os/toolchain/x86/bin
+TOOLCHAIN32 =  /home/ex/ctf/vrig/KVM_chinchilla/toolchain/i686/bin
+TOOLCHAIN64 =  /home/ex/ctf/vrig/KVM_chinchilla/toolchain/x86/bin
 CC32 = $(TOOLCHAIN32)/i686-elf-gcc
 CC64 = $(TOOLCHAIN64)/x86_64-elf-gcc
 

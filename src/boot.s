@@ -19,6 +19,16 @@ DIRECTION equ      1 << 2      ; For data: Grow up or down, For Code: Priv level
 READWRITE equ      1 << 1      ; For data: 0 -> no write, for code: 0 -> no read
 ACCESS equ         1 << 0      ; Changed to 1 as access flag, keep as 1 unless otherwise needed
 
+
+; Random bits 
+PG_BIT equ         31 
+PAE_BIT equ        5
+LME_BIT equ        8 ; long mode enable
+
+; MSR
+EFER_MSR equ       0xC0000080
+
+
 section .multiboot
 align 4
     dd MAGIC
@@ -33,28 +43,6 @@ global _start
 _start:
     mov esp, stack_top
     push ebx ; this is a multiboot_info_t structure referenced in documentation for multiboot
-    ; Disable paging
-    mov eax, cr0
-    
-    and eax, 0x7FFFFFFF
-    mov cr0, eax
-    ; Set the PAE enable bit in CR4(Bit 5)
-    mov eax, cr4 
-    or eax, 0b10000
-    mov cr4, eax
-    ; Load CR3 with the physical address of the PML4 (Level 4 Page Map)
-
-    ; Enable long mode by setting the LME flag (bit 8) in MSR 0xC0000080 (aka EFER)
-    mov ecx, 0xC0000080 
-    rdmsr
-    or eax, 0b10000000   ; eax has lower 32
-    ;wrmsr
-    ;
-    ;;; Enable paging
-    ;mov eax, cr0
-    ;or eax, 0x80000000 
-    ;mov cr4, eax
-
     call main
 repeat:
     jmp repeat
@@ -73,12 +61,39 @@ outb:
     ; esp + 4 is value?
     out dx, al
     ret
+global enter_long_mode 
+; Function will be called with a pointer to pgdir 
+enter_long_mode: 
+    ; Load CR3 with the physical address of the PML4 (Level 4 Page Map)
+    mov eax, [esp+4]
+    mov cr3, eax
+
+    ; Disable paging
+    mov eax, cr0
+    and eax, 0x7FFFFFFF
+    mov cr0, eax
+
+    call enable_pae 
+
+    ; Enable long mode by setting the LME flag (bit 8) in MSR 0xC0000080 (aka EFER)
+    mov ecx, EFER_MSR 
+    rdmsr
+    or eax, (1 << LME_BIT)    ; eax has lower 32
+    wrmsr
+    
+    ;; Enable paging
+    mov eax, cr0
+    or eax, (1 << PG_BIT) 
+    mov cr4, eax
+
 
 global enable_pae
 enable_pae:
+    ; Set the PAE enable bit in CR4(Bit 5)
     mov eax, cr4
-    or eax, 1 << 5 
+    or eax, 1 << PAE_BIT
     mov cr4, eax
+
 global die
 die:
     hlt

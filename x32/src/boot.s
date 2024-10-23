@@ -36,6 +36,8 @@ LME_BIT equ        8 ; long mode enable
 EFER_MSR equ       0xC0000080
 
 
+KERNEL64_ENTRY equ 0x200000
+
 section .multiboot
 align 4
     dd MAGIC
@@ -141,8 +143,9 @@ Realm64:
     mov gs, ax                    ; Set the G-segment to the A-register.
     mov ss, ax                    ; Set the stack segment to the A-register.
     rep stosq                     ; Clear the screen.
-    mov rdi, 0x1337
-    hlt                           ; Halt the processor.
+    mov rax, 0x200000 
+    jmp rax
+
 
 global die
 die:

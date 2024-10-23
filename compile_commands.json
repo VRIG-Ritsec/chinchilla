@@ -1,7 +1,7 @@
 [
   {
     "arguments": [
-      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "/home/ex/ctf/vrig/KVM_chinchilla/toolchain/i686/bin/i686-elf-gcc",
       "-c",
       "-I",
       "include",
@@ -10,13 +10,13 @@
       "build/printf.o",
       "src/printf.c"
     ],
-    "directory": "/home/ex/ctf/vrig/sharad_os",
-    "file": "/home/ex/ctf/vrig/sharad_os/src/printf.c",
-    "output": "/home/ex/ctf/vrig/sharad_os/build/printf.o"
+    "directory": "/home/ex/ctf/vrig/KVM_chinchilla/x32",
+    "file": "/home/ex/ctf/vrig/KVM_chinchilla/x32/src/printf.c",
+    "output": "/home/ex/ctf/vrig/KVM_chinchilla/x32/build/printf.o"
   },
   {
     "arguments": [
-      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "/home/ex/ctf/vrig/KVM_chinchilla/toolchain/i686/bin/i686-elf-gcc",
       "-c",
       "-I",
       "include",
@@ -25,13 +25,13 @@
       "build/paging.o",
       "src/paging.c"
     ],
-    "directory": "/home/ex/ctf/vrig/sharad_os",
-    "file": "/home/ex/ctf/vrig/sharad_os/src/paging.c",
-    "output": "/home/ex/ctf/vrig/sharad_os/build/paging.o"
+    "directory": "/home/ex/ctf/vrig/KVM_chinchilla/x32",
+    "file": "/home/ex/ctf/vrig/KVM_chinchilla/x32/src/paging.c",
+    "output": "/home/ex/ctf/vrig/KVM_chinchilla/x32/build/paging.o"
   },
   {
     "arguments": [
-      "/home/ex/ctf/vrig/sharad_os/toolchain/i686/bin/i686-elf-gcc",
+      "/home/ex/ctf/vrig/KVM_chinchilla/toolchain/i686/bin/i686-elf-gcc",
       "-c",
       "-I",
       "include",
@@ -40,8 +40,8 @@
       "build/main.o",
       "src/main.c"
     ],
-    "directory": "/home/ex/ctf/vrig/sharad_os",
-    "file": "/home/ex/ctf/vrig/sharad_os/src/main.c",
-    "output": "/home/ex/ctf/vrig/sharad_os/build/main.o"
+    "directory": "/home/ex/ctf/vrig/KVM_chinchilla/x32",
+    "file": "/home/ex/ctf/vrig/KVM_chinchilla/x32/src/main.c",
+    "output": "/home/ex/ctf/vrig/KVM_chinchilla/x32/build/main.o"
   }
 ]

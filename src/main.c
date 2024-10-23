@@ -30,6 +30,7 @@ void write_string( int colour, const char *string )
 extern void outb(unsigned short port, unsigned char val);
 extern unsigned char inb(unsigned short port);
 extern void enable_pae();
+extern void enter_long_mode(void *);
 
 int init_serial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts
@@ -64,5 +65,6 @@ int main(multiboot_info_t* multiboot_info){
     enable_pae();
     void * pgdir = init_page_table();
     printf("HELLO WORLD");
+    enter_long_mode(pgdir);
     return 0;
 }

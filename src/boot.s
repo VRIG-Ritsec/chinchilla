@@ -11,13 +11,20 @@ SERIAL_PORT equ 0x3f8 ; COM1
 
 ; Contants for segment descriptor access bytes  
 ; https://wiki.osdev.org/Global_Descriptor_Table
-PRESENT equ        1 << 7      ; Must be 1 for valid segment
-PRIV_LEVEL equ     1 << 5      ; 2 bits for CPU Priv level 0-> Kernel 3-> Userspace
-TYPE equ           1 << 4      ; 0 is segment reg, 1 is code/data
-EXECUTE equ        1 << 3      ; 0 is data segment, 1 is code segment 
-DIRECTION equ      1 << 2      ; For data: Grow up or down, For Code: Priv level to execute
-READWRITE equ      1 << 1      ; For data: 0 -> no write, for code: 0 -> no read
-ACCESS equ         1 << 0      ; Changed to 1 as access flag, keep as 1 unless otherwise needed
+GDT_PRESENT equ        1 << 7      ; Must be 1 for valid segment
+GDT_PRIV_LEVEL equ     1 << 5      ; 2 bits for CPU Priv level 0-> Kernel 3-> Userspace
+GDT_TYPE equ           1 << 4      ; 0 is segment reg, 1 is code/data
+GDT_EXEC equ           1 << 3      ; 0 is data segment, 1 is code segment 
+GDT_DIRECTION equ      1 << 2      ; For data: Grow up or down, For Code: Priv level to execute
+GDT_RW equ             1 << 1      ; For data: 0 -> no write, for code: 0 -> no read
+GDT_ACCESS equ         1 << 0      ; Changed to 1 as access flag, keep as 1 unless otherwise needed
+
+
+; Segment descriptor Flags bits, adding 4 as flags and limit share a start
+; https://wiki.osdev.org/Global_Descriptor_Table
+GDT_GRAN_4K       equ 1 << (3 + 4)
+GDT_SZ_32         equ 1 << (2 + 4)
+GDT_LONG_MODE     equ 1 << (1 + 4)
 
 
 ; Random bits 
@@ -34,6 +41,31 @@ align 4
     dd MAGIC
     dd FLAGS
     dd CHECKSUM
+
+section .data
+; Creates the data region for the GDT
+; https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_Long_Mode 
+GDT64:
+    .Null: equ $ - GDT64
+        dq 0
+    .Code: equ $ - GDT64
+        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
+        db 0                                           ; Base (mid, bits 16-23)
+        db GDT_PRESENT | GDT_TYPE | GDT_EXEC | GDT_RW  ; Access
+        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF           ; Flags & Limit (high, bits 16-19)
+        db 0                                           ; Base (high, bits 24-31)
+    .Data: equ $ - GDT64
+        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
+        db 0                                           ; Base (mid, bits 16-23)
+        db GDT_PRESENT | GDT_TYPE | GDT_RW             ; Access
+        db GDT_GRAN_4K | GDT_SZ_32 | 0xF               ; Flags & Limit (high, bits 16-19)
+        db 0                                           ; Base (high, bits 24-31)
+    .TSS: equ $ - GDT64
+        dd 0x00000068
+        dd 0x00CF8900
+    .Pointer:
+        dw $ - GDT64 - 1
+        dq GDT64
 
 
 extern stack_top
@@ -86,6 +118,10 @@ enter_long_mode:
     or eax, (1 << PG_BIT) 
     mov cr4, eax
 
+    ; Setup GDT Table and CS Register 
+    lgdt [GDT64.Pointer]         ; Load the 64-bit global descriptor table.
+    jmp GDT64.Code:Realm64       ; Set the code segment and enter 64-bit long mode.
+
 
 global enable_pae
 enable_pae:
@@ -93,6 +129,20 @@ enable_pae:
     mov eax, cr4
     or eax, 1 << PAE_BIT
     mov cr4, eax
+
+; Can use full registers at this point now
+[BITS 64]
+Realm64:
+    cli                           ; Clear the interrupt flag.
+    mov ax, GDT64.Data            ; Set the A-register to the data descriptor.
+    mov ds, ax                    ; Set the data segment to the A-register.
+    mov es, ax                    ; Set the extra segment to the A-register.
+    mov fs, ax                    ; Set the F-segment to the A-register.
+    mov gs, ax                    ; Set the G-segment to the A-register.
+    mov ss, ax                    ; Set the stack segment to the A-register.
+    rep stosq                     ; Clear the screen.
+    mov rdi, 0x1337
+    hlt                           ; Halt the processor.
 
 global die
 die:

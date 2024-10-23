@@ -9,6 +9,16 @@ CHECKSUM equ -(MAGIC + FLAGS)   ; checksum of above, to prove we are multiboot
 ; Constants for serial 
 SERIAL_PORT equ 0x3f8 ; COM1 
 
+; Contants for segment descriptor access bytes  
+; https://wiki.osdev.org/Global_Descriptor_Table
+PRESENT equ        1 << 7      ; Must be 1 for valid segment
+PRIV_LEVEL equ     1 << 5      ; 2 bits for CPU Priv level 0-> Kernel 3-> Userspace
+TYPE equ           1 << 4      ; 0 is segment reg, 1 is code/data
+EXECUTE equ        1 << 3      ; 0 is data segment, 1 is code segment 
+DIRECTION equ      1 << 2      ; For data: Grow up or down, For Code: Priv level to execute
+READWRITE equ      1 << 1      ; For data: 0 -> no write, for code: 0 -> no read
+ACCESS equ         1 << 0      ; Changed to 1 as access flag, keep as 1 unless otherwise needed
+
 section .multiboot
 align 4
     dd MAGIC

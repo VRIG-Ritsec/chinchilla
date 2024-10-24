@@ -1,6 +1,4 @@
 .gdb_history
-*build*
-toolchain/*
-**build/*
-**build/*
-*.o
+**/build/*
+toolchain/
+.cache/*

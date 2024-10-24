@@ -20,7 +20,7 @@ void * pgdir = &page_table_start;
 void * free_page = &page_table_start + 0x1000;
 
 void * get_new_page(){
-    if (free_page >= (void*)&page_table_start + 0x1000){
+    if (free_page >= (void*)&page_table_start + 0x10000){
         die();
     }
     free_page += 0x1000; 

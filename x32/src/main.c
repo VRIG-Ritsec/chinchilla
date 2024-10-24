@@ -62,9 +62,8 @@ int init_serial() {
 
 int main(multiboot_info_t* multiboot_info){
     init_serial();
-    enable_pae();
     void * pgdir = init_page_table();
-    printf("HELLO WORLD");
+    printf("HELLO WORLD\n");
     enter_long_mode(pgdir);
     return 0;
 }

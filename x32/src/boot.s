@@ -60,7 +60,7 @@ GDT64:
         dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
         db 0                                           ; Base (mid, bits 16-23)
         db GDT_PRESENT | GDT_TYPE | GDT_RW             ; Access
-        db GDT_GRAN_4K | GDT_SZ_32 | 0xF               ; Flags & Limit (high, bits 16-19)
+        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF               ; Flags & Limit (high, bits 16-19)
         db 0                                           ; Base (high, bits 24-31)
     .TSS: equ $ - GDT64
         dd 0x00000068
@@ -107,7 +107,10 @@ enter_long_mode:
     and eax, 0x7FFFFFFF
     mov cr0, eax
 
-    call enable_pae 
+    ;call enable_pae 
+    mov eax, cr4
+    or eax, 1 << PAE_BIT
+    mov cr4, eax
 
     ; Enable long mode by setting the LME flag (bit 8) in MSR 0xC0000080 (aka EFER)
     mov ecx, EFER_MSR 
@@ -118,7 +121,7 @@ enter_long_mode:
     ;; Enable paging
     mov eax, cr0
     or eax, (1 << PG_BIT) 
-    mov cr4, eax
+    mov cr0, eax
 
     ; Setup GDT Table and CS Register 
     lgdt [GDT64.Pointer]         ; Load the 64-bit global descriptor table.
@@ -131,6 +134,7 @@ enable_pae:
     mov eax, cr4
     or eax, 1 << PAE_BIT
     mov cr4, eax
+    ret
 
 ; Can use full registers at this point now
 [BITS 64]

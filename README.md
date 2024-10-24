@@ -39,7 +39,7 @@ Additionally, the kernel is started with the `-s -S` flag, which pauses executio
 You have a few options to start the kernel:
 ```bash 
 chmod +x ./run_kernel.sh
-./start.sh
+./run_kernel.sh
 ```
 or: 
 ```bash 

@@ -1,2 +1,2 @@
 tmux split-window "bash gdb.sh"
-bash run.sh
+bash run_kernel.sh

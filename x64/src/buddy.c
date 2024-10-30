@@ -46,3 +46,14 @@ static inline void remove_page_in_list(struct page_struct *page){
 static inline void add_page_to_order(struct page_struct * page, u64 order){
     ADD_LIST(GET_ORDER_HEAD(order), page_to_list(page));
 }
+
+// returns the largest order size will fill up 
+u64 page_order(u64 size){
+    if(size >> PAGE_SHIFT == 0){
+        return 0;
+    }
+    // counts the number of leading zero's and adds PAGE_SHIFT to account for order 0 being page_shift 
+    u64 index = __builtin_clz(size) + PAGE_SHIFT;
+    return 31-index;
+}
+

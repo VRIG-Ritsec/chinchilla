@@ -1,14 +1,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "list.h"
+
 #include "paging.h"
+#include "buddy.h"
+
 #include "printf.h"
 #include "multiboot.h"
 #include "kernel32.h"
-#include "buddy.h"
 
 
-struct free_area free_area = {};
+struct free_area free_area = {0};
+
 
 // store the start and end of kernel image so we dont' accidently free these pages
 extern uint64_t kernel64_start;

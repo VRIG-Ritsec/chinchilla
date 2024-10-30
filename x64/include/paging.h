@@ -1,5 +1,5 @@
-#ifndef __BUDDY_H
-#define __BUDDY_H
+#ifndef __PAGING_H
+#define __PAGING_H
 
 #include "types.h"
 #include "list.h"

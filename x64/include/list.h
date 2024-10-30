@@ -2,6 +2,8 @@
 #define __LINK_LIST
 
 
+#include "kernel.h"
+
 struct list_head{
     struct list_head* prev;
     struct list_head* next;
@@ -32,5 +34,7 @@ static inline void ADD_LIST(struct list_head * head, struct list_head * new){
 }
 
 
+// returns entry corralated with list 
+#define list_entry(ptr, type, member) (container_of(ptr, type, member)) 
 
 #endif

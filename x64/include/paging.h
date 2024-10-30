@@ -10,11 +10,17 @@
 
 // Align it so we can fit equally in pages so each page can hold the same amount 
 struct __attribute__((aligned(32))) page_struct{
-    u32 flags; 
+    u64 flags; 
     // Virt addr of the page 
     u64 address;
     struct list_head list;
 };
+
+// page_struct flags 
+#define PAGE_ORDER 60 
+#define PAGE_ORDER_BITS 4
+#define PAGE_ORDER_MASK ((1 << PAGE_ORDER_BITS) -1)
+
 
 #define SYSTEM_MAX_MEMORY (4ul * GIGABYTE)   // our system only supports 4GB of memory
 #define PAGE_STRUCTS_NEEDED (SYSTEM_MAX_MEMORY >> PAGE_SHIFT)
@@ -31,5 +37,7 @@ extern struct page_struct page_array[PAGE_ARRAY_LEN]; //we support up to 4G of m
 
 #define PHYS_TO_PFN(addr) (addr >> PAGE_SHIFT)
 #define PHYS_TO_PAGE(addr) (PFN_TO_PAGE(PHYS_TO_PFN(addr)))
+
+
 
 #endif

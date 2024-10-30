@@ -16,6 +16,6 @@ struct free_area{
     struct list_head orders[MAX_ORDER+1];
 };
 
-// invoked as a pointer as functions that use free_area as a function name overwrite the global free_area struct
-#define GET_ORDER_HEAD(order) (free_area->orders[order])
+// returns a pointer to start of list_head in order
+#define GET_ORDER_HEAD(order) (&(free_area.orders[order]))
 #endif

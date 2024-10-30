@@ -44,6 +44,7 @@ static inline void remove_page_in_list(struct page_struct *page){
 }
 
 static inline void add_page_to_order(struct page_struct * page, u64 order){
+    set_page_order(page, order);
     ADD_LIST(GET_ORDER_HEAD(order), page_to_list(page));
 }
 
@@ -55,5 +56,31 @@ u64 page_order(u64 size){
     // counts the number of leading zero's and adds PAGE_SHIFT to account for order 0 being page_shift 
     u64 index = __builtin_clz(size) + PAGE_SHIFT;
     return 31-index;
+}
+
+
+void init_free_area(){
+    for(u32 i = 0; i < MAX_ORDER; i++){
+        INIT_LIST_HEAD(&free_area.orders[i]);
+    }
+}
+
+// function free's all unused memory to free_area
+void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
+   init_free_area(); 
+
+    // loop over memory regions specificed by mutliboot_info 
+    if(!(multiboot->flags & (1 << 6))){
+        // ERROR HERE, no mmap fields are availbile
+    }
+    struct multiboot_mmap_entry* base = (struct multiboot_mmap_entry*)(u64)multiboot->mmap_addr;
+    u64 entry_count = multiboot->mmap_length / sizeof(struct multiboot_mmap_entry);
+    for(u32 i = 0; i < entry_count; i++){
+        if(base[i].type != MULTIBOOT_MEMORY_AVAILABLE){
+            continue;
+        }
+        u64 start = base[i].addr;
+        u64 end = base[i].addr + base[i].len;
+    }
 }
 

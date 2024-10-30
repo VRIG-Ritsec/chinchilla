@@ -2,6 +2,7 @@ ENTRY(_start)
 
 SECTIONS {
     . = 1M;
+	kernel32_start = .;
 
     .text BLOCK(4K) : ALIGN(4K)
     {
@@ -28,11 +29,12 @@ SECTIONS {
         *(.bss)
     }
 
-    page_table_start = ALIGN(4k);
-    . += 0x10000;
-    page_table_end = ALIGN(4k);
-
     /* Creates a stack */ 
     . += 0x4000;
     stack_top = .;
+
+    page_table_start = ALIGN(4k);
+    . += 0x10000;
+    page_table_end = ALIGN(4k);
+	kernel32_end = .;
 }

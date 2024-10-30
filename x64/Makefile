@@ -6,7 +6,7 @@ TOOLCHAIN64 =  ../toolchain/x86_64/bin
 CC32 = $(TOOLCHAIN32)/i686-elf-gcc
 CC64 = $(TOOLCHAIN64)/x86_64-elf-gcc
 
-all: $(OUT_DIR)/kernel64
+all: kernel64
 
 main64:
 	$(CC64) -o $(OUT_DIR)/main.o $(SRC_DIR)/main.c -c -I include -ffreestanding
@@ -20,9 +20,14 @@ helper: $(SRC_DIR)/helper.s
 printf:
 	$(CC64) -o $(OUT_DIR)/printf.o $(SRC_DIR)/printf.c -c -I include -ffreestanding
 
+paging:
+	$(CC64) -o $(OUT_DIR)/paging.o $(SRC_DIR)/paging.c -c -I include -ffreestanding
+buddy:
+	$(CC64) -o $(OUT_DIR)/buddy.o $(SRC_DIR)/buddy.c -c -I include -ffreestanding
 
-$(OUT_DIR)/kernel64: helper start printf main64
-	$(CC64) -T linker.ld -o $@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -m64 -fno-pie $(OUT_DIR)/start.o $(OUT_DIR)/printf.o $(OUT_DIR)/main.o $(OUT_DIR)/helper.o -lgcc
+
+kernel64: helper start printf main64 paging buddy
+	$(CC64) -T linker.ld -o $@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -m64 -fno-pie $(OUT_DIR)/start.o $(OUT_DIR)/printf.o $(OUT_DIR)/main.o $(OUT_DIR)/helper.o $(OUT_DIR)/paging.o -lgcc
 
 
 clean:

@@ -31,7 +31,7 @@ buddy:
 
 
 kernel64: helper start printf main64 paging buddy
-	$(CC64) -T linker.ld -o $@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -m64 -fno-pie $(OUT_DIR)/start.o $(OUT_DIR)/printf.o $(OUT_DIR)/main.o $(OUT_DIR)/helper.o $(OUT_DIR)/paging.o -lgcc
+	$(CC64) -T linker.ld -o $(OUT_DIR)/$@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -m64 -fno-pie $(OUT_DIR)/start.o $(OUT_DIR)/printf.o $(OUT_DIR)/main.o $(OUT_DIR)/helper.o $(OUT_DIR)/paging.o -lgcc
 
 
 clean:

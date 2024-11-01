@@ -8,6 +8,7 @@
 #include "printf.h"
 #include "multiboot.h"
 #include "kernel32.h"
+#include "assert.h"
 
 
 struct free_area free_area = {0};
@@ -70,9 +71,8 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
    init_free_area(); 
 
     // loop over memory regions specificed by mutliboot_info 
-    if(!(multiboot->flags & (1 << 6))){
-        // ERROR HERE, no mmap fields are availbile
-    }
+    ASSERT(!(multiboot->flags & (1 << 6)), "mmap_* fields are invalid, no memory found");
+
     struct multiboot_mmap_entry* base = (struct multiboot_mmap_entry*)(u64)multiboot->mmap_addr;
     u64 entry_count = multiboot->mmap_length / sizeof(struct multiboot_mmap_entry);
     for(u32 i = 0; i < entry_count; i++){

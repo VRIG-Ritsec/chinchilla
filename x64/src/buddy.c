@@ -59,7 +59,8 @@ void init_free_area(){
     }
 }
 
-void init_page_struct_array(u64 start_addr, u64 len){
+// Initailizes the page's in this range by setting flags and address
+void init_page_structs(u64 start_addr, u64 len){
     for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
         ASSERT(current > (4ul * GIGABYTE), "System only supports up to 4B of memory");
         struct page_struct * page= PHYS_TO_PAGE(current);
@@ -76,6 +77,7 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
     // loop over memory regions specificed by mutliboot_info 
     ASSERT(!(multiboot->flags & (1 << 6)), "mmap_* fields are invalid, no memory found");
     struct multiboot_mmap_entry* base = (struct multiboot_mmap_entry*)(u64)multiboot->mmap_addr;
+
     u64 entry_count = multiboot->mmap_length / sizeof(struct multiboot_mmap_entry);
     for(u32 i = 0; i < entry_count; i++){
         if(base[i].type != MULTIBOOT_MEMORY_AVAILABLE){
@@ -83,7 +85,10 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         }
         u64 start = base[i].addr;
         u64 end = base[i].addr + base[i].len;
-        init_page_struct_array(start, base[i].len);
+        // must clear lower 12 bits of len as multiboot is NOT page aligned
+        u64 len = base[i].len & (~0xffful);
+        free_page(start, len);
+        init_page_structs(start, len);
     }
 }
 
@@ -107,23 +112,25 @@ u64 add_and_coalecse(struct page_struct * page, u64 order){
             remove_page_in_list(tail_page);
         }
         add_and_coalecse(head_page, order +1);
+        return 0;
     };
  
 base_case:
-    add_and_coalecse(page, order);
+    add_page_to_order(page, order);
     return 0;
 }
 
 u64 free_page(u64 page_addr, u64 page_len){
+    u64 current = page_addr;
     while(page_len != 0){
         u64 order = MIN(page_order(page_len), MAX_ORDER) ;
         u64 page_size =  ORDER_TO_SIZE(order);
-        struct page_struct * page = PHYS_TO_PAGE(page_addr);
+        struct page_struct * page = PHYS_TO_PAGE(current);
 
         add_and_coalecse(page, order);
 
         page_len -= page_size;
-        page_addr += page_size;
+        current += page_size;
     }
     return 0;
 }

@@ -45,7 +45,7 @@ static inline u64 get_buddy(u64 pfn, u32 order);
 u64 page_order(u64 size);
 void init_free_area();
 
-void init_page_struct_array(u64 start_addr, u64 len);
+void init_page_structs(u64 start_addr, u64 len);
 
 void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot);
 u64 add_and_coalecse(struct page_struct * page, u64 order);

@@ -93,3 +93,44 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
     }
 }
 
+u64 add_and_coalecse(struct page_struct * page, u64 order){
+    u64 pfn = PAGE_TO_PFN(page);
+    u64 buddy_pfn = get_buddy(pfn, order);
+    struct page_struct * buddy_page = PFN_TO_PAGE(buddy_pfn);
+    u64 buddy_order = get_page_order(buddy_page);
+
+    if(order >= MAX_ORDER){
+        // if MAX_ORDER no more orders to merge into 
+        goto base_case;
+    }
+
+    // if buddy is NOT freed OR not the same order, just add buddy and exit
+    if(buddy_order == order){
+        struct page_struct * head_page = PFN_TO_PAGE(MIN(pfn, buddy_pfn));
+        struct page_struct * tail_page = PFN_TO_PAGE(MAX(pfn, buddy_pfn));
+        // TODO Do we really need this?
+        if(get_page_order(tail_page) != -1){
+            remove_page_in_list(tail_page);
+        }
+        add_and_coalecse(head_page, order +1);
+    };
+ 
+base_case:
+    add_and_coalecse(page, order);
+    return 0;
+}
+
+u64 free_page(u64 page_addr, u64 page_len){
+    while(page_len != 0){
+        u64 order = MIN(page_order(page_len), MAX_ORDER) ;
+        u64 page_size =  ORDER_TO_SIZE(order);
+        struct page_struct * page = PHYS_TO_PAGE(page_addr);
+
+        add_and_coalecse(page, order);
+
+        page_len -= page_size;
+        page_addr -= page_size;
+    }
+    return 0;
+}
+

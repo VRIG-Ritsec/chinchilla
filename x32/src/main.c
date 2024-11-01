@@ -12,6 +12,7 @@ typedef uint64_t u64;
 #define PORT 0x3f8          // COM1
 #define CLEAR_SCREEN "\e[1;1H\e[2J"
 
+struct kernel_32_info info = {0};
 
 // note this example will always write to the top
 // line of the screen
@@ -30,7 +31,11 @@ void write_string( int colour, const char *string )
 extern void outb(unsigned short port, unsigned char val);
 extern unsigned char inb(unsigned short port);
 extern void enable_pae();
-extern void enter_long_mode(void *);
+extern void enter_long_mode(void* table, struct kernel_32_info* multiboot);
+
+
+extern uint64_t page_table_start;
+extern uint64_t page_table_end;
 
 int init_serial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts
@@ -63,7 +68,13 @@ int init_serial() {
 int main(multiboot_info_t* multiboot_info){
     init_serial();
     void * pgdir = init_page_table();
+
+    info.page_table_start = (uint32_t)&page_table_start;
+    info.page_table_end = (uint32_t)&page_table_end;
+    info.multiboot_info = (uint32_t)multiboot_info;
+
+
     printf("HELLO WORLD\n");
-    enter_long_mode(pgdir);
+    enter_long_mode(pgdir, &info);
     return 0;
 }

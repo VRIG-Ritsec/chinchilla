@@ -98,6 +98,9 @@ outb:
 global enter_long_mode 
 ; Function will be called with a pointer to pgdir 
 enter_long_mode: 
+	mov eax, [esp+4] ; get the value of pgdir
+	mov edi, [esp+8] ;get the value of the multiboot information structure
+
     ; Load CR3 with the physical address of the PML4 (Level 4 Page Map)
     mov eax, [esp+4]
     mov cr3, eax

@@ -1,16 +1,4 @@
-#include <stdint.h>
-#include <stdbool.h>
-#include "list.h"
-
-#include "paging.h"
 #include "buddy.h"
-
-#include "printf.h"
-#include "multiboot.h"
-#include "kernel32.h"
-#include "assert.h"
-#include "math.h"
-
 
 struct free_area free_area = {0};
 
@@ -71,7 +59,7 @@ void init_free_area(){
     }
 }
 
-void init_page_structs(u64 start_addr, u64 len){
+void init_page_struct_array(u64 start_addr, u64 len){
     for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
         ASSERT(current > (4ul * GIGABYTE), "System only supports up to 4B of memory");
         struct page_struct * page= PHYS_TO_PAGE(current);
@@ -95,6 +83,7 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         }
         u64 start = base[i].addr;
         u64 end = base[i].addr + base[i].len;
+        init_page_struct_array(start, base[i].len);
     }
 }
 

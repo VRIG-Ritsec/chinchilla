@@ -1,8 +1,19 @@
 #ifndef __BUDDY_H
 #define __BUDDY_H
 
-#include "./list.h"
-#include "./types.h"
+#include <stdint.h>
+#include <stdbool.h>
+
+
+#include "types.h"
+#include "paging.h"
+#include "list.h"
+
+#include "printf.h"
+#include "multiboot.h"
+#include "kernel32.h"
+#include "assert.h"
+#include "math.h"
 
 
 /*#define ORDER_TO_SIZE(order) (PAGE_SIZE * 2 ** order)*/
@@ -18,4 +29,26 @@ struct free_area{
 
 // returns a pointer to start of list_head in order
 #define GET_ORDER_HEAD(order) (&(free_area.orders[order]))
+
+static inline struct list_head * page_to_list(struct page_struct * page);
+
+static inline void set_page_order(struct page_struct * page, u64 order);
+
+static inline u64 get_page_order(struct page_struct * page);
+
+static inline void remove_page_in_list(struct page_struct *page);
+
+static inline void add_page_to_order(struct page_struct * page, u64 order);
+
+static inline u64 get_buddy(u64 pfn, u32 order);
+
+u64 page_order(u64 size);
+void init_free_area();
+
+void init_page_struct_array(u64 start_addr, u64 len);
+
+void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot);
+u64 add_and_coalecse(struct page_struct * page, u64 order);
+
+u64 free_page(u64 page_addr, u64 page_len);
 #endif

@@ -6,7 +6,7 @@
 
 
 /*#define ORDER_TO_SIZE(order) (PAGE_SIZE * 2 ** order)*/
-#define ORDER_TO_SIZE (1 << (order + PAGE_SHIFT))  // same as above but uses more efficent bit shift math
+#define ORDER_TO_SIZE(order) (1 << (order + PAGE_SHIFT))  // same as above but uses more efficent bit shift math
 
 
 

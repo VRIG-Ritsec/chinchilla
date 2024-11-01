@@ -9,6 +9,7 @@
 #include "multiboot.h"
 #include "kernel32.h"
 #include "assert.h"
+#include "math.h"
 
 
 struct free_area free_area = {0};
@@ -47,6 +48,10 @@ static inline void remove_page_in_list(struct page_struct *page){
 static inline void add_page_to_order(struct page_struct * page, u64 order){
     set_page_order(page, order);
     ADD_LIST(GET_ORDER_HEAD(order), page_to_list(page));
+}
+
+static inline u64 get_buddy(u64 pfn, u32 order){
+    return pfn ^ (1 << order);
 }
 
 // returns the largest order size will fill up 

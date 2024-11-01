@@ -66,13 +66,22 @@ void init_free_area(){
     }
 }
 
+void init_page_structs(u64 start_addr, u64 len){
+    for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
+        ASSERT(current > (4ul * GIGABYTE), "System only supports up to 4B of memory");
+        struct page_struct * page= PHYS_TO_PAGE(current);
+        page->flags = 0;
+        page->address = current; 
+        INIT_LIST_HEAD(&page->list);
+    }
+}
+
 // function free's all unused memory to free_area
 void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
    init_free_area(); 
 
     // loop over memory regions specificed by mutliboot_info 
     ASSERT(!(multiboot->flags & (1 << 6)), "mmap_* fields are invalid, no memory found");
-
     struct multiboot_mmap_entry* base = (struct multiboot_mmap_entry*)(u64)multiboot->mmap_addr;
     u64 entry_count = multiboot->mmap_length / sizeof(struct multiboot_mmap_entry);
     for(u32 i = 0; i < entry_count; i++){

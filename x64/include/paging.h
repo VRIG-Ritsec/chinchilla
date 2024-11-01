@@ -32,7 +32,7 @@ extern struct page_struct page_array[PAGE_ARRAY_LEN]; //we support up to 4G of m
 #define PFN_TO_PAGE(pfn) (&page_array[pfn])
 
 
-#define PAGE_TO_PFN(page) ((struct page_struct * )page - &page_array)
+#define PAGE_TO_PFN(page) ((struct page_struct * )page - (struct page_struct * )&page_array)
 #define PAGE_TO_PHYS(page) (PFN_TO_PHYS(PAGE_TO_PFN(page)))
 
 #define PHYS_TO_PFN(addr) (addr >> PAGE_SHIFT)

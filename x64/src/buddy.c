@@ -123,7 +123,7 @@ u64 free_page(u64 page_addr, u64 page_len){
         add_and_coalecse(page, order);
 
         page_len -= page_size;
-        page_addr -= page_size;
+        page_addr += page_size;
     }
     return 0;
 }

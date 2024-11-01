@@ -108,7 +108,7 @@ u64 add_and_coalecse(struct page_struct * page, u64 order){
     if(buddy_order == order){
         struct page_struct * head_page = PFN_TO_PAGE(MIN(pfn, buddy_pfn));
         struct page_struct * tail_page = PFN_TO_PAGE(MAX(pfn, buddy_pfn));
-        // TODO Do we really need this?
+        // first free and page is second means the page is NOT in a list so check to avoid freeing item that's not in a list 
         if(get_page_order(tail_page) != -1){
             remove_page_in_list(tail_page);
         }

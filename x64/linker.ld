@@ -51,7 +51,7 @@ SECTIONS
 	stack_top = ALIGN(4K); 
 
    	page_array = ALIGN(4K);
-	. += 0x100000;
+	. += 0x2000000;
 	page_array_end = ALIGN(4K);
 	kernel64_end = .;
  

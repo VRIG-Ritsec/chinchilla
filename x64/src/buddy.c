@@ -1,4 +1,5 @@
 #include "buddy.h"
+#include "list.h"
 
 struct free_area free_area = {0};
 
@@ -59,6 +60,20 @@ void init_free_area(){
     }
 }
 
+
+static void print_free_area() {
+    for(uint32_t order = 0; order<=MAX_ORDER; order++) {
+        struct list_head* head = GET_ORDER_HEAD(order);
+        struct list_head* pos;
+        printf("ORDER %d, SIZE: %#x\n", order, ORDER_TO_SIZE(order));
+        list_for_each(head, pos) {
+            struct page_struct* page= list_to_page(pos);
+            printf("\t%#x\n", PAGE_TO_PHYS(page));
+        }
+    }
+}
+
+
 // Initailizes the page's in this range by setting flags and address
 void init_page_structs(u64 start_addr, u64 len){
     for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
@@ -92,6 +107,7 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         init_page_structs(start, len);
         free_page_range(start, len);
     }
+    print_free_area();
 }
 
 u64 free_pages(struct page_struct * page, u64 order){
@@ -136,4 +152,3 @@ u64 free_page_range(u64 page_addr, u64 page_len){
     }
     return 0;
 }
-

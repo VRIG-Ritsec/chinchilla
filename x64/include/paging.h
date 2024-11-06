@@ -24,9 +24,8 @@ struct __attribute__((aligned(32))) page_struct{
 
 #define SYSTEM_MAX_MEMORY (4ul * GIGABYTE)   // our system only supports 4GB of memory
 #define PAGE_STRUCTS_NEEDED (SYSTEM_MAX_MEMORY >> PAGE_SHIFT)
-#define PAGE_ARRAY_LEN (PAGE_STRUCTS_NEEDED * sizeof(struct page_struct))
 
-extern struct page_struct page_array[PAGE_ARRAY_LEN]; //we support up to 4G of memory
+extern struct page_struct page_array[PAGE_STRUCTS_NEEDED]; //we support up to 4G of memory
 
 #define PFN_TO_PHYS(pfn) (pfn << PAGE_SHIFT)
 #define PFN_TO_PAGE(pfn) (&page_array[pfn])

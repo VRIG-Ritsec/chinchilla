@@ -83,10 +83,12 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         if(base[i].type != MULTIBOOT_MEMORY_AVAILABLE){
             continue;
         }
+        // round size UP to nearest page
         u64 start = base[i].addr;
+        ALIGN(start, PAGE_SHIFT);
         u64 end = base[i].addr + base[i].len;
         // must clear lower 12 bits of len as multiboot is NOT page aligned
-        u64 len = base[i].len & (~0xffful);
+        u64 len = base[i].len & (~PAGE_MASK);
         free_page(start, len);
         init_page_structs(start, len);
     }

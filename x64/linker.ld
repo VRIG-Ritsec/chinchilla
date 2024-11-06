@@ -50,6 +50,12 @@ SECTIONS
 	. += 0x8000;
 	stack_top = ALIGN(4K); 
 
+    kernel_pgd = ALIGN(4K);
+	. += 0x1000;
+    kernel_pud = ALIGN(4K);
+	. += 0x1000;
+
+
    	page_array = ALIGN(4K);
 	. += 0x2000000;
 	page_array_end = ALIGN(4K);

@@ -89,8 +89,8 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         u64 end = base[i].addr + base[i].len;
         // must clear lower 12 bits of len as multiboot is NOT page aligned
         u64 len = base[i].len & (~PAGE_MASK);
-        free_page(start, len);
         init_page_structs(start, len);
+        free_page(start, len);
     }
 }
 

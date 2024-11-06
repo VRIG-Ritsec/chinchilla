@@ -37,4 +37,7 @@ static inline void ADD_LIST(struct list_head * head, struct list_head * new){
 // returns entry corralated with list 
 #define list_entry(ptr, type, member) (container_of(ptr, type, member)) 
 
+// for loop to loop over items 
+#define list_for_each(head, pos) for((pos) = (head)->next; pos != (head); pos = pos->next )
+
 #endif

@@ -90,11 +90,11 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         // must clear lower 12 bits of len as multiboot is NOT page aligned
         u64 len = base[i].len & (~PAGE_MASK);
         init_page_structs(start, len);
-        free_page(start, len);
+        free_page_range(start, len);
     }
 }
 
-u64 add_and_coalecse(struct page_struct * page, u64 order){
+u64 free_pages(struct page_struct * page, u64 order){
     u64 pfn = PAGE_TO_PFN(page);
     u64 buddy_pfn = get_buddy(pfn, order);
     struct page_struct * buddy_page = PFN_TO_PAGE(buddy_pfn);
@@ -113,7 +113,7 @@ u64 add_and_coalecse(struct page_struct * page, u64 order){
         if(get_page_order(tail_page) != -1){
             remove_page_in_list(tail_page);
         }
-        add_and_coalecse(head_page, order +1);
+        free_pages(head_page, order +1);
         return 0;
     };
  
@@ -122,14 +122,14 @@ base_case:
     return 0;
 }
 
-u64 free_page(u64 page_addr, u64 page_len){
+u64 free_page_range(u64 page_addr, u64 page_len){
     u64 current = page_addr;
     while(page_len != 0){
         u64 order = MIN(page_order(page_len), MAX_ORDER) ;
         u64 page_size =  ORDER_TO_SIZE(order);
         struct page_struct * page = PHYS_TO_PAGE(current);
 
-        add_and_coalecse(page, order);
+        free_pages(page, order);
 
         page_len -= page_size;
         current += page_size;

@@ -48,7 +48,7 @@ void init_free_area();
 void init_page_structs(u64 start_addr, u64 len);
 
 void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot);
-u64 add_and_coalecse(struct page_struct * page, u64 order);
+u64 free_pages(struct page_struct * page, u64 order);
 
-u64 free_page(u64 page_addr, u64 page_len);
+u64 free_page_range(u64 page_addr, u64 page_len);
 #endif

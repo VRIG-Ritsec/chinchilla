@@ -54,7 +54,7 @@ u64 page_order(u64 size){
 
 
 void init_free_area(){
-    for(u32 i = 0; i < MAX_ORDER; i++){
+    for(u32 i = 0; i <= MAX_ORDER; i++){
         INIT_LIST_HEAD(&free_area.orders[i]);
     }
 }

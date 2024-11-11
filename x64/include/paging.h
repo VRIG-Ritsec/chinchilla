@@ -4,9 +4,23 @@
 #include "types.h"
 #include "list.h"
 
+#include <stdint.h>
+#include <stdbool.h>
+#include "printf.h"
+#include "multiboot.h"
+#include "kernel32.h"
+
 #define PAGE_SHIFT 12 
 #define PAGE_SIZE (1<< PAGE_SHIFT)
 #define PAGE_MASK (PAGE_SIZE - 1)
+
+#define PAGE_DESC_COUNT (PAGE_SIZE / sizeof(u64*))
+
+
+// Page Table Flags
+#define PG_PRESENT (1<<0)
+#define PG_WRITE   (1<<1)
+
 
 // Align it so we can fit equally in pages so each page can hold the same amount 
 struct __attribute__((aligned(32))) page_struct{

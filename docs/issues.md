@@ -3,9 +3,12 @@ So here's a running list of fun debugging issues we ran into that and wanted to 
 
 
 ## QEMU 4GB of RAM issue 
-*Commit:* caf258f64ed5f6ca7645d6c0aec9a6ad365d091f 
-*Fix Commit:*  997c7e6317e5c33961f18dfe540eeee77c07f98f
-*Issue:* When we initally setup page tables in 32-bit mode we didn't create valid page table entries for all of the memory space as we only setup 4MB of memory.
+**Commit:** caf258f64ed5f6ca7645d6c0aec9a6ad365d091f 
+
+**Fix Commit:**  997c7e6317e5c33961f18dfe540eeee77c07f98f
+
+**Issue:** When we initally setup page tables in 32-bit mode we didn't create valid page table entries for all of the memory space as we only setup 4MB of memory.
+
 [x32/src/paging.c#L31](https://github.com/ex4722/chinchilla/blob/ffcedf7c452fdf973693d692e9b44111cbea3983/x32/src/paging.c#L31)
 ```c 
 void * init_page_table(){

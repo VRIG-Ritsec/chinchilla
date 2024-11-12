@@ -30,18 +30,6 @@ struct free_area{
 // returns a pointer to start of list_head in order
 #define GET_ORDER_HEAD(order) (&(free_area.orders[order]))
 
-static inline struct list_head * page_to_list(struct page_struct * page);
-
-static inline void set_page_order(struct page_struct * page, u64 order);
-
-static inline u64 get_page_order(struct page_struct * page);
-
-static inline void remove_page_in_list(struct page_struct *page);
-
-static inline void add_page_to_order(struct page_struct * page, u64 order);
-
-static inline u64 get_buddy(u64 pfn, u32 order);
-
 u64 page_order(u64 size);
 void init_free_area();
 
@@ -54,4 +42,6 @@ u64 free_page_range(u64 page_addr, u64 page_len);
 
 struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_order, u32 target_order);
 struct page_struct * __allocate_page(u32 order);
+
+void print_free_area();
 #endif

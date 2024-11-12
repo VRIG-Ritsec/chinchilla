@@ -68,7 +68,7 @@ void init_free_area(){
 }
 
 
-static void print_free_area() {
+void print_free_area() {
     for(uint32_t order = 0; order<=MAX_ORDER; order++) {
         struct list_head* head = GET_ORDER_HEAD(order);
         struct list_head* pos;
@@ -165,9 +165,12 @@ u64 free_page_range(u64 page_addr, u64 page_len){
     return 0;
 }
 
+// function assumes that page will be deleted later, only responsible for breaking and inserting buddy pages
 struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_order, u32 target_order){
-    ASSERT(current_order > target_order, "Current order must be smaller than target order");
+    printf("Attempting to break page @ %#lx curr order %d target order %d\n", PAGE_TO_PHYS(page), current_order, target_order);
+    ASSERT(current_order < target_order, "Current order must be smaller than target order");
 
+    // correct order, don't break just return
     if(current_order == target_order){
         return page;
     }
@@ -177,6 +180,8 @@ struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_
 
     struct list_head * head = GET_ORDER_HEAD(current_order - 1);
     ADD_LIST(head, page_to_list(buddy_page));
+    // set the buddy order
+    set_page_order(buddy_page, current_order - 1);
 
     return break_pages_to_order(page, current_order -1, target_order);
 }
@@ -190,18 +195,18 @@ struct page_struct * __allocate_page(u32 order){
     // empty page of order is free, jsut return it
     struct list_head * order_list = GET_ORDER_HEAD(order);
     if(!list_empty(order_list)){
-        free_page = list_to_page(list_peak(order_list));
+        free_page = list_to_page(list_pop(order_list));
     }else{
-        while(++order <= MAX_ORDER){
-            struct list_head * order_list = GET_ORDER_HEAD(order);
+        while(++page_order <= MAX_ORDER){
+            struct list_head * order_list = GET_ORDER_HEAD(page_order);
             if(!list_empty(order_list)){
-                page_order = order; 
-                free_page = list_to_page(list_peak(order_list));
+                free_page = list_to_page(list_pop(order_list));
+                break;
             }
         }
     }
     // no more free memory 
-    ASSERT(free_page, "No more memory left in system");
+    ASSERT(!free_page, "No more memory left in system");
     free_page = break_pages_to_order(free_page, page_order, order);
     clear_page_order(free_page);
     return free_page;

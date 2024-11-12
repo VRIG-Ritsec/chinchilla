@@ -44,7 +44,7 @@ static inline u32 list_empty(struct list_head *head) {
     return (head == head->next);
 }
 
-static inline struct list_head* list_peak(struct list_head * head){
+static inline struct list_head* list_peek(struct list_head * head){
     return head->next;
 }
 

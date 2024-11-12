@@ -24,7 +24,7 @@ extern void die();
 void * init_page_table(){
     kernel_pgd[0] = PGD_ENTRY((u32)&kernel_pud);
     // loops per each gig
-    for(u32 i = 0; i < 4; i++){
+    for(u32 i = 0; i < 512; i++){
         kernel_pud[i] = PUD_ENTRY(i * GIGABYTE);
     }
 

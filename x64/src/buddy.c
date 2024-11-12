@@ -77,7 +77,7 @@ static void print_free_area() {
 // Initailizes the page's in this range by setting flags and address
 void init_page_structs(u64 start_addr, u64 len){
     for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
-        ASSERT(current > (4ul * GIGABYTE), "System only supports up to 4B of memory");
+        ASSERT(current > (4UL * GIGABYTE), "System only supports up to 4B of memory");
         struct page_struct * page= PHYS_TO_PAGE(current);
         page->flags = 0;
         page->address = current; 
@@ -104,6 +104,7 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         u64 end = base[i].addr + base[i].len;
         // must clear lower 12 bits of len as multiboot is NOT page aligned
         u64 len = base[i].len & (~PAGE_MASK);
+        printf("%#lx, %#lx\n", start, len);
         init_page_structs(start, len);
         free_page_range(start, len);
     }

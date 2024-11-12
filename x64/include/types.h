@@ -8,7 +8,7 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-#define GIGABYTE (1 << 30)
+#define GIGABYTE (1UL << 30)
 #define MEGABYTE (1 << 20)
 
 #endif

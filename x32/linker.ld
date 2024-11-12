@@ -33,8 +33,10 @@ SECTIONS {
     . += 0x4000;
     stack_top = .;
 
-    page_table_start = ALIGN(4k);
-    . += 0x10000;
+    kernel_pgd = ALIGN(4K);
+	. += 0x1000;
+    kernel_pud = ALIGN(4K);
+	. += 0x1000;
     page_table_end = ALIGN(4k);
 	kernel32_end = .;
 }

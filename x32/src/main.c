@@ -34,7 +34,6 @@ extern void enable_pae();
 extern void enter_long_mode(void* table, struct kernel_32_info* multiboot);
 
 
-extern uint64_t page_table_start;
 extern uint64_t page_table_end;
 
 int init_serial() {
@@ -69,7 +68,7 @@ int main(multiboot_info_t* multiboot_info){
     init_serial();
     void * pgdir = init_page_table();
 
-    info.page_table_start = (uint32_t)&page_table_start;
+    info.page_table_start = (uint32_t)&pgdir;
     info.page_table_end = (uint32_t)&page_table_end;
     info.multiboot_info = (uint32_t)multiboot_info;
 

@@ -54,8 +54,4 @@ extern struct page_struct page_array[PAGE_STRUCTS_NEEDED]; //we support up to 4G
 #define PHYS_TO_PAGE(addr) (PFN_TO_PAGE(PHYS_TO_PFN(addr)))
 
 
-// creates valid entires for page table's 
-#define PGD_ENTRY(val) (val | PG_PRESENT | PG_RW)
-#define PUD_ENTRY(val) (val | PG_PRESENT | PG_RW | PG_PS)
-
 #endif

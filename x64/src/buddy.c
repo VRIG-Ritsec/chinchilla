@@ -105,6 +105,10 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         // must clear lower 12 bits of len as multiboot is NOT page aligned
         u64 len = base[i].len & (~PAGE_MASK);
         printf("%#lx, %#lx\n", start, len);
+        if(start + len > (4ul * GIGABYTE)){
+            ASSERT(start > (4ul * GIGABYTE), "Multiboot start value is greater than 4GB");
+            len = (4ul * GIGABYTE) - start;
+        }
         init_page_structs(start, len);
         free_page_range(start, len);
     }

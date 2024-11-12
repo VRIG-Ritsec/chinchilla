@@ -1,5 +1,7 @@
 #include "buddy.h"
+#include "assert.h"
 #include "list.h"
+#include "paging.h"
 
 struct free_area free_area = {0};
 
@@ -23,6 +25,11 @@ static inline struct list_head * page_to_list(struct page_struct * page){
 static inline void set_page_order(struct page_struct * page, u64 order){
     page->flags |=  (((order + 1)& PAGE_ORDER_MASK) << PAGE_ORDER);
 }
+
+static inline void clear_page_order(struct page_struct* page) {
+    set_page_order(page, -1);
+}
+
 
 // returns 0-MAX_ORDER if page is allocated and -1 if free 
 static inline u64 get_page_order(struct page_struct * page){
@@ -156,4 +163,46 @@ u64 free_page_range(u64 page_addr, u64 page_len){
         current += page_size;
     }
     return 0;
+}
+
+struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_order, u32 target_order){
+    ASSERT(current_order > target_order, "Current order must be smaller than target order");
+
+    if(current_order == target_order){
+        return page;
+    }
+    u64 pfn = PAGE_TO_PFN(page);
+    u64 buddy_pfn = get_buddy(pfn, current_order-1);
+    struct page_struct * buddy_page = PFN_TO_PAGE(buddy_pfn);
+
+    struct list_head * head = GET_ORDER_HEAD(current_order - 1);
+    ADD_LIST(head, page_to_list(buddy_page));
+
+    return break_pages_to_order(page, current_order -1, target_order);
+}
+
+struct page_struct * __allocate_page(u32 order){
+    if(order > MAX_ORDER){
+        return NULL;
+    }
+    struct page_struct * free_page = NULL;
+    u32 page_order = order; 
+    // empty page of order is free, jsut return it
+    struct list_head * order_list = GET_ORDER_HEAD(order);
+    if(!list_empty(order_list)){
+        free_page = list_to_page(list_peak(order_list));
+    }else{
+        while(++order <= MAX_ORDER){
+            struct list_head * order_list = GET_ORDER_HEAD(order);
+            if(!list_empty(order_list)){
+                page_order = order; 
+                free_page = list_to_page(list_peak(order_list));
+            }
+        }
+    }
+    // no more free memory 
+    ASSERT(free_page, "No more memory left in system");
+    free_page = break_pages_to_order(free_page, page_order, order);
+    clear_page_order(free_page);
+    return free_page;
 }

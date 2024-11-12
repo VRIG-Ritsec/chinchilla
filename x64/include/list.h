@@ -40,4 +40,20 @@ static inline void ADD_LIST(struct list_head * head, struct list_head * new){
 // for loop to loop over items 
 #define list_for_each(head, pos) for((pos) = (head)->next; pos != (head); pos = pos->next )
 
+static inline u32 list_empty(struct list_head *head) {
+    return (head == head->next);
+}
+
+static inline struct list_head* list_peak(struct list_head * head){
+    return head->next;
+}
+
+static inline struct list_head* list_pop(struct list_head * head){
+    struct list_head * tmp = head->next;
+    DELETE_LIST_HEAD(head);
+    return tmp;
+}
+
+
+
 #endif

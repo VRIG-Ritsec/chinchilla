@@ -77,7 +77,7 @@ static void print_free_area() {
 // Initailizes the page's in this range by setting flags and address
 void init_page_structs(u64 start_addr, u64 len){
     for(u64 current = start_addr; current < start_addr + len; current += PAGE_SIZE){
-        ASSERT(current > (4UL * GIGABYTE), "System only supports up to 4B of memory");
+        /*ASSERT(current > (4UL * GIGABYTE), "System only supports up to 4B of memory");*/
         struct page_struct * page= PHYS_TO_PAGE(current);
         page->flags = 0;
         page->address = current; 

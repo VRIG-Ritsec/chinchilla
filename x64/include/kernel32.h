@@ -2,9 +2,7 @@
 #define __KERNEL_32
 
 #include <stdint.h>
-/*
- * We use this struct to pass info between states and modes
- */
+
 struct kernel_32_info {
     uint32_t kernel32_reserved_start;
     uint32_t kernel32_reserved_end;

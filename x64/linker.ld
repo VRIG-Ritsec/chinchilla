@@ -8,6 +8,7 @@ ENTRY(_start)
 SECTIONS
 {
 	. = 2M;    /* Load the 64 bit kernel at 2M */
+    kernel64_start = .;
 
     /* 
     * Puts the entrypoint code at the start of the ELF everytime as the compiler 
@@ -48,4 +49,10 @@ SECTIONS
 
 	. += 0x8000;
 	stack_top = ALIGN(4K); 
+
+   	page_array = ALIGN(4K);
+	. += 0x2000000;
+	page_array_end = ALIGN(4K);
+	kernel64_end = ALIGN(4k);
+ 
 }

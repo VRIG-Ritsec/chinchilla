@@ -1,5 +1,8 @@
 .gdb_history
 **/build/*
+x64/build/kernel64
+x32/build/kernel32
 toolchain/
 .cache/*
 compile_commands.json
+**/.cache/*

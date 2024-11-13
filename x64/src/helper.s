@@ -12,3 +12,7 @@ inb:
 	mov dx, di
 	in al, dx
 	ret
+
+// loads value into the lidt register
+global lidt
+lidt:

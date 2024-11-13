@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "assert.h"
+#include "log.h"
 #include "kernel32.h"
 #include "list.h"
 #include "math.h"

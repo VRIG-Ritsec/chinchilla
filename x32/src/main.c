@@ -66,7 +66,7 @@ int main(multiboot_info_t *multiboot_info) {
     info.kernel32_reserved_end = (uint32_t)&kernel32_reserved_end;
     info.multiboot_info = (uint32_t)multiboot_info;
 
-    printf("HELLO WORLD\n");
+    printf("[+] Attempting to enter long mode\n");
     enter_long_mode(pgdir, &info);
     return 0;
 }

@@ -4,10 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "assert.h"
 #include "kernel32.h"
 #include "list.h"
 #include "multiboot.h"
 #include "paging.h"
+#include "string.h"
+#include "math.h"
 #include "types.h"
 
 // These are the same but second one is more efficent

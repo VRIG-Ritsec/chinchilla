@@ -207,8 +207,10 @@ struct page_struct * __allocate_page(u32 order){
     
     free_page = break_pages_to_order(free_page, page_order, order);
     clear_page_order(free_page);
+    memset(PAGE_TO_PHYS(free_page), 0, ORDER_TO_SIZE(order));
     return free_page;
 }
+
 struct page_struct * allocate_page(u64 size){
   u32 order = ORDER_TO_SIZE(size);
     if(order > MAX_ORDER){

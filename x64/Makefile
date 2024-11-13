@@ -8,7 +8,7 @@ CC64 = $(TOOLCHAIN64)/x86_64-elf-gcc
 
 CFLAGS = -g
 
-TARGETS = main64 start helper printf paging buddy
+TARGETS = main64 start helper printf paging buddy intr string
 OBJECTS = $(addprefix $(OUT_DIR)/, $(addsuffix .o, $(TARGETS)))
 
 
@@ -30,7 +30,11 @@ paging:
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/paging.o $(SRC_DIR)/paging.c -c -I include -ffreestanding
 buddy:
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/buddy.o $(SRC_DIR)/buddy.c -c -I include -ffreestanding 
+intr:
+	$(CC64) $(CFLAGS) -o $(OUT_DIR)/intr.o $(SRC_DIR)/intr.c -c -I include -ffreestanding 
 
+string:
+	$(CC64) $(CFLAGS) -o $(OUT_DIR)/string.o $(SRC_DIR)/string.c -c -I include -ffreestanding 
 
 
 kernel64: $(TARGETS) 

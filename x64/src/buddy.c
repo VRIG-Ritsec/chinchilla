@@ -1,14 +1,18 @@
 #include "buddy.h"
-#include "assert.h"
-#include "list.h"
-#include "paging.h"
 
 struct free_area free_area = {0};
 
-
-// store the start and end of kernel image so we dont' accidently free these pages
-extern uint64_t kernel64_start;
-extern uint64_t kernel64_end;
+// range of invalid memory
+struct invalid_range invalid_memory_list[] = {
+   {
+     .start = (u64)&kernel64_start,
+     .end= (u64)&kernel64_end,
+   },
+  {
+    .start = 0,
+    .end= 0
+  }
+};
 
 // takes a list head and extracts the page_struct out of it
 static inline struct page_struct * list_to_page(struct list_head * list){
@@ -91,9 +95,62 @@ void init_page_structs(u64 start_addr, u64 len){
         INIT_LIST_HEAD(&page->list);
     }
 }
+
+static void init_free_table(struct kernel_32_info * info){
+  invalid_memory_list[FREEABLE_K32_RESERVED_IDX].start = info->kernel32_reserved_start;
+  invalid_memory_list[FREEABLE_K32_RESERVED_IDX].end = info->kernel32_reserved_end;
+
+  for(u32 i = 0; i < ARRAY_LEN(invalid_memory_list); i++){
+    ASSERT(invalid_memory_list[i].start & PAGE_MASK, "range_list index %d start is %#lx which not aligned properly", i, invalid_memory_list[i].start);
+    ASSERT(invalid_memory_list[i].end & PAGE_MASK, "range_list index %d end is %#lx which not aligned properly", i, invalid_memory_list[i].end);
+        printf("Invalid blocks at %#lx-%#lx\n", invalid_memory_list[i].start, invalid_memory_list[i].end);
+  }
+}
+
+// strtok like function to get next 
+u64 next_freeable(struct kernel_32_info * info, u64 start, u64 len, u64 * valid_size){
+    // global state of the start and len of current region 
+    static u64 current_start = 0;
+    static u64 current_length = 0;
+    // if non-zero, the setup case
+    if(len){
+        current_start = start;
+        current_length = len;
+    }
+    // at end of buffer, done with function
+    if(!current_length){
+        return -1;
+    }
+    
+    // set next_start and invalid_range_size to the values that select entire buffer so if no regions are found the entire block get's freed
+    u64 next_start = current_start + current_length; 
+    u64 invalid_range_size = current_length;
+    u64 valid_start = current_start;
+
+    // loop over all of range_list to find closest invalid chunk
+    for(u32 idx = 0; idx < ARRAY_LEN(invalid_memory_list); idx++){
+        struct invalid_range * invalid = &invalid_memory_list[idx];
+        // look for lowest region AFTER current_start
+        if((current_start < invalid->start) && (invalid->end < next_start)){
+            // set next_start end of region as we are skipping over it
+            next_start = invalid->end;
+            invalid_range_size = invalid->end - invalid->start;
+        }
+    }
+
+    // valid_size is count between start of invalid region and start of valid region, next_start - invalid_range_size == start of invalid region(next_start invalid->end)
+    *valid_size = (next_start - invalid_range_size) - valid_start ;
+
+    current_length -= next_start - current_start;
+    current_start = next_start;
+    return valid_start; 
+}
+
 // function free's all unused memory to free_area
 void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
+   u64 real_len = 0;
    init_free_area(); 
+   init_free_table(info);
 
     // loop over memory regions specificed by mutliboot_info 
     ASSERT(!(multiboot->flags & (1 << 6)), "mmap_* fields are invalid, no memory found");
@@ -110,15 +167,20 @@ void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
         u64 end = base[i].addr + base[i].len;
         // must clear lower 12 bits of len as multiboot is NOT page aligned
         u64 len = base[i].len & (~PAGE_MASK);
-        printf("%#lx, %#lx\n", start, len);
         if(start + len > (4ul * GIGABYTE)){
             ASSERT(start > (4ul * GIGABYTE), "Multiboot start value is greater than 4GB");
             len = (4ul * GIGABYTE) - start;
         }
-        init_page_structs(start, len);
-        free_page_range(start, len);
+        printf("Freeing %#lx-%#lx\n", start, start + len);
+
+        u64 cur_start = next_freeable(info, start, len, &real_len);
+        while(cur_start != -1){
+            printf("[!] %#lx-%#lx\n", cur_start, cur_start + real_len);
+            init_page_structs(cur_start, real_len);
+            free_page_range(cur_start, real_len);
+            cur_start = next_freeable(info, 0, 0, &real_len);
+        }
     }
-    print_free_area();
 }
 
 u64 free_pages(struct page_struct * page, u64 order){
@@ -166,7 +228,6 @@ u64 free_page_range(u64 page_addr, u64 page_len){
 
 // function assumes that page will be deleted later, only responsible for breaking and inserting buddy pages
 struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_order, u32 target_order){
-    printf("Attempting to break page @ %#lx curr order %d target order %d\n", PAGE_TO_PHYS(page), current_order, target_order);
     ASSERT(current_order < target_order, "Current order must be smaller than target order");
 
     // correct order, don't break just return

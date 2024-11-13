@@ -53,6 +53,6 @@ SECTIONS
    	page_array = ALIGN(4K);
 	. += 0x2000000;
 	page_array_end = ALIGN(4K);
-	kernel64_end = .;
+	kernel64_end = ALIGN(4k);
  
 }

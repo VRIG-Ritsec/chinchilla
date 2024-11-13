@@ -7,10 +7,10 @@
 #include "assert.h"
 #include "kernel32.h"
 #include "list.h"
+#include "math.h"
 #include "multiboot.h"
 #include "paging.h"
 #include "string.h"
-#include "math.h"
 #include "types.h"
 
 // These are the same but second one is more efficent
@@ -27,6 +27,9 @@ struct invalid_range {
     u64 start;
     u64 end;
 };
+
+#define FREEABLE_KERNEL64_IDX 0
+#define FREEABLE_K32_RESERVED_IDX 1
 
 // returns a pointer to start of list_head in order
 #define GET_ORDER_HEAD(order) (&(free_area.orders[order]))

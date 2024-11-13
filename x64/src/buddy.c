@@ -127,6 +127,7 @@ u64 next_freeable(struct kernel_32_info *info, u64 start, u64 len,
     u64 next_start = current_start + current_length;
     u64 invalid_range_size = current_length;
     u64 valid_start = current_start;
+    u64 total_size = current_length;
 
     // loop over all of range_list to find closest invalid chunk
     for (u32 idx = 0; idx < ARRAY_LEN(invalid_memory_list); idx++) {
@@ -136,13 +137,12 @@ u64 next_freeable(struct kernel_32_info *info, u64 start, u64 len,
             // set next_start end of region as we are skipping over it
             next_start = invalid->end;
             invalid_range_size = invalid->end - invalid->start;
+            // total_size is count between start of invalid region and start of valid
+            total_size = invalid->start - valid_start;
         }
     }
 
-    // valid_size is count between start of invalid region and start of valid
-    // region, next_start - invalid_range_size == start of invalid
-    // region(next_start invalid->end)
-    *valid_size = (next_start - invalid_range_size) - valid_start;
+    *valid_size = total_size;
 
     current_length -= next_start - current_start;
     current_start = next_start;

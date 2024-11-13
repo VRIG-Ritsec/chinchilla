@@ -45,31 +45,6 @@ align 4
     dd CHECKSUM
 
 section .data
-; Creates the data region for the GDT
-; https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_Long_Mode 
-GDT64:
-    .Null: equ $ - GDT64
-        dq 0
-    .Code: equ $ - GDT64
-        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
-        db 0                                           ; Base (mid, bits 16-23)
-        db GDT_PRESENT | GDT_TYPE | GDT_EXEC | GDT_RW  ; Access
-        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF           ; Flags & Limit (high, bits 16-19)
-        db 0                                           ; Base (high, bits 24-31)
-    .Data: equ $ - GDT64
-        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
-        db 0                                           ; Base (mid, bits 16-23)
-        db GDT_PRESENT | GDT_TYPE | GDT_RW             ; Access
-        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF               ; Flags & Limit (high, bits 16-19)
-        db 0                                           ; Base (high, bits 24-31)
-    .TSS: equ $ - GDT64
-        dd 0x00000068
-        dd 0x00CF8900
-    .Pointer:
-        dw $ - GDT64 - 1
-        dq GDT64
-
-
 extern stack_top
 extern main 
 section .text
@@ -156,3 +131,28 @@ Realm64:
 global die
 die:
     hlt
+
+section .gdt 
+; Creates the data region for the GDT
+; https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_Long_Mode 
+GDT64:
+    .Null: equ $ - GDT64
+        dq 0
+    .Code: equ $ - GDT64
+        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
+        db 0                                           ; Base (mid, bits 16-23)
+        db GDT_PRESENT | GDT_TYPE | GDT_EXEC | GDT_RW  ; Access
+        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF           ; Flags & Limit (high, bits 16-19)
+        db 0                                           ; Base (high, bits 24-31)
+    .Data: equ $ - GDT64
+        dd 0xFFFF                                      ; Limit & Base (low, bits 0-15)
+        db 0                                           ; Base (mid, bits 16-23)
+        db GDT_PRESENT | GDT_TYPE | GDT_RW             ; Access
+        db GDT_GRAN_4K | GDT_LONG_MODE | 0xF               ; Flags & Limit (high, bits 16-19)
+        db 0                                           ; Base (high, bits 24-31)
+    .TSS: equ $ - GDT64
+        dd 0x00000068
+        dd 0x00CF8900
+    .Pointer:
+        dw $ - GDT64 - 1
+        dq GDT64

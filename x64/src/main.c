@@ -12,10 +12,5 @@ int main64(struct kernel_32_info* ptr) {
     init_memory(&info, &multiboot_info);
 
     printf("hello world from 64 bit!\n");
-    struct page_struct * page = __allocate_page(0);
-    print_free_area();
-    struct page_struct * page2 = __allocate_page(0);
-    print_free_area();
-    printf("DONE\n");
     for(;;) {}
 }

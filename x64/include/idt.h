@@ -41,4 +41,11 @@ struct idt64{
    uint32_t offset_3;        // offset bits 32..63
    uint32_t zero;            // reserved
 };
+
+// this structure is passed to the lidt instruction based off diagram here https://wiki.osdev.org/Interrupt_Descriptor_Table
+struct idtr{
+    u16 size; 
+    u64 offset;
+};
+
 #endif

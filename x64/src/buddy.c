@@ -101,8 +101,6 @@ static void init_free_table(struct kernel_32_info *info) {
         ASSERT(invalid_memory_list[i].end & PAGE_MASK,
                "range_list index %d end is %#lx which not aligned properly", i,
                invalid_memory_list[i].end);
-        printf("Invalid blocks at %#lx-%#lx\n", invalid_memory_list[i].start,
-               invalid_memory_list[i].end);
     }
 }
 
@@ -178,11 +176,15 @@ void init_memory(struct kernel_32_info *info, multiboot_info_t *multiboot) {
                    "Multiboot start value is greater than 4GB");
             len = (4ul * GIGABYTE) - start;
         }
-        printf("Freeing %#lx-%#lx\n", start, start + len);
+        if(len == 0){
+            continue;
+        }
+        PINFO("Attempting to add multiboot range %#lx-%#lx\n", start, start + len);
+        PINFO("Following regions added to free list:\n");
 
         u64 cur_start = next_freeable(info, start, len, &real_len);
         while (cur_start != -1) {
-            printf("[!] %#lx-%#lx\n", cur_start, cur_start + real_len);
+            PINFO("    %#lx-%#lx\n", cur_start, cur_start + real_len);
             init_page_structs(cur_start, real_len);
             free_page_range(cur_start, real_len);
             cur_start = next_freeable(info, 0, 0, &real_len);

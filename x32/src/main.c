@@ -60,13 +60,14 @@ int init_serial() {
 
 int main(multiboot_info_t *multiboot_info) {
     init_serial();
+    printf("[+] Serial initialized\n");
     void *pgdir = init_page_table();
 
     info.kernel32_reserved_start = (uint32_t)&kernel32_reserved_start;
     info.kernel32_reserved_end = (uint32_t)&kernel32_reserved_end;
     info.multiboot_info = (uint32_t)multiboot_info;
 
-    printf("HELLO WORLD\n");
+    printf("[+] Attempting to enter long mode\n");
     enter_long_mode(pgdir, &info);
     return 0;
 }

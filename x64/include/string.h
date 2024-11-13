@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void memset(void * buf, u8 c, u64 size);
+void memset(void *buf, u8 c, u64 size);
 
 #endif

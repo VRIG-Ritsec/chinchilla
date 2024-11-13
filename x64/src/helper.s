@@ -12,3 +12,8 @@ inb:
 	mov dx, di
 	in al, dx
 	ret
+
+global lidt
+lidt:
+
+

@@ -91,7 +91,6 @@ void init_page_structs(u64 start_addr, u64 len){
         INIT_LIST_HEAD(&page->list);
     }
 }
-
 // function free's all unused memory to free_area
 void init_memory(struct kernel_32_info* info, multiboot_info_t* multiboot){
    init_free_area(); 
@@ -186,10 +185,8 @@ struct page_struct * break_pages_to_order(struct page_struct *page, u32 current_
     return break_pages_to_order(page, current_order -1, target_order);
 }
 
+
 struct page_struct * __allocate_page(u32 order){
-    if(order > MAX_ORDER){
-        return NULL;
-    }
     struct page_struct * free_page = NULL;
     u32 page_order = order; 
     // empty page of order is free, jsut return it
@@ -207,7 +204,15 @@ struct page_struct * __allocate_page(u32 order){
     }
     // no more free memory 
     ASSERT(!free_page, "No more memory left in system");
+    
     free_page = break_pages_to_order(free_page, page_order, order);
     clear_page_order(free_page);
     return free_page;
+}
+struct page_struct * allocate_page(u64 size){
+  u32 order = ORDER_TO_SIZE(size);
+    if(order > MAX_ORDER){
+        return NULL;
+    }
+    return __allocate_page(order);
 }

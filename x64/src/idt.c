@@ -4,9 +4,10 @@
 
 struct idt64 *idt64;
 
+extern void lidt(struct idtr* idtr);
+
 void isr_handler(u64 isr, struct isr_save_state save_state) {
-    printf("FUCK");
-    printf("ISR Number: %s\n", isr);
+    printf("ISR Number: %d\n", isr);
 }
 
 void setup_exception_table(){
@@ -42,4 +43,9 @@ void setup_exception_table(){
 void init_idt(void) {
     idt64 = PAGE_TO_VIRT(allocate_page(PAGE_SIZE));
     setup_exception_table();
+    struct idtr idtr = {
+        .size = PAGE_SIZE - 1,
+        .offset = (u64)idt64,
+    };
+    lidt(&idtr);
 }

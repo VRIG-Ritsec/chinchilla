@@ -14,5 +14,8 @@ inb:
 	ret
 
 ; loads value into the lidt register
-;global lidt
-;lidt:
+; extern void lidt(u64 idt_address, u64 size);
+global lidt
+lidt:
+    lidt [rdi]
+    ret

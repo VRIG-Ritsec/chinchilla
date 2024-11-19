@@ -43,7 +43,7 @@ struct idt64{
 };
 
 // this structure is passed to the lidt instruction based off diagram here https://wiki.osdev.org/Interrupt_Descriptor_Table
-struct idtr{
+struct __attribute__((packed)) idtr{
     u16 size; 
     u64 offset;
 };

@@ -85,11 +85,21 @@ struct idtr{
      .offset_3 = ((offset) >> 32),                                             \
      .zero = 0}
 
-// @TODO make macro for both these fuckers
+// used to handle expcetions, occur to running software, synchronously 
 #define IDT_TRAP_ENTRY(offset) IDT_ENTRY(offset, IDT_TRAP_GATE)
-
+// done by devices and interrupt's the program, async
 #define IDT_INTR_ENTRY(offset) IDT_ENTRY(offset, IDT_INTR_GATE)
 
+// https://pdos.csail.mit.edu/6.828/2008/readings/i386/s09_06.htm
+struct iret_stack{
+    u64 error_code;
+    u64 old_rip; 
+    u64 old_cs; // made bigger due to hole, really is 16 bit 
+    u64 old_rflags;
+    u64 old_rsp;
+    u64 old_ss;
+
+};
 
 struct isr_save_state{
     u64 r15;
@@ -107,6 +117,8 @@ struct isr_save_state{
     u64 rdx;
     u64 rsi;
     u64 rdi;
+    struct iret_stack iret_stack;
 };
+
 
 #endif

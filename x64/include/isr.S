@@ -1,5 +1,0 @@
-section .text
-
-.macro
-
-

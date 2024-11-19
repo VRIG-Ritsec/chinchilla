@@ -3,6 +3,7 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "printf.h"
+#include "idt.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -30,7 +31,8 @@ int main64(struct kernel_32_info *ptr) {
     init_memory(&info, &multiboot_info);
     PINFO("Memory Successfully initialized\n");
     print_welcome_banner();
-
+    init_idt();
+    asm("int3");
     for (;;) {
     }
 }

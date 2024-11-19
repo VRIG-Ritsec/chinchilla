@@ -19,4 +19,8 @@
 extern u64 kernel64_start;
 extern u64 kernel64_end;
 
+#define CONCAT(a,b) a##b
+// to concat macros inside of concat
+#define EXPAND_AND_CONCAT(a,b) CONCAT(a,b)
+
 #endif

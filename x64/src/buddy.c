@@ -285,7 +285,7 @@ struct page_struct *__allocate_page(u32 order) {
 }
 
 struct page_struct *allocate_page(u64 size) {
-    u32 order = ORDER_TO_SIZE(size);
+    u32 order = SIZE_TO_ORDER(size);
     if (order > MAX_ORDER) {
         return NULL;
     }

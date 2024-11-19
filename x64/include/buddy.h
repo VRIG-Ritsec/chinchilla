@@ -5,9 +5,9 @@
 #include <stdint.h>
 
 #include "assert.h"
-#include "log.h"
 #include "kernel32.h"
 #include "list.h"
+#include "log.h"
 #include "math.h"
 #include "multiboot.h"
 #include "paging.h"
@@ -17,6 +17,8 @@
 // These are the same but second one is more efficent
 /*#define ORDER_TO_SIZE(order) (PAGE_SIZE * 2 ** order)*/
 #define ORDER_TO_SIZE(order) (1 << (order + PAGE_SHIFT))
+#define SIZE_TO_ORDER(size)                                                    \
+    ((size == 0) ? 0 : (31 - __builtin_clz(size - 1)) + 1 - 12)
 
 // Max order of buddy sizes is 11, so max size if 0x1000 * 2 ** 11
 #define MAX_ORDER 11

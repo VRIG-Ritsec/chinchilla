@@ -75,10 +75,11 @@ struct idtr{
 
 #define IDT_EXCEPTION_RESERVED_MIN     22   // Reserved exception vectors 22–31
 #define IDT_EXCEPTION_RESERVED_MAX     31   // Last reserved exception vector
-//
+
+// @TODO Why does selector need to be 8 
 #define IDT_ENTRY(offset, attribute)                                           \
     {.offset_1 = (offset) & 0xffff,                                            \
-     .selector = 1,                                                            \
+     .selector = 8,                                                            \
      .ist = 0,                                                                 \
      .type_attributes = IDT_PRESENT | attribute,                               \
      .offset_2 = ((offset) >> 16) & 0xffff,                                    \

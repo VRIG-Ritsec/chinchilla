@@ -75,5 +75,20 @@ struct idtr{
 
 #define IDT_EXCEPTION_RESERVED_MIN     22   // Reserved exception vectors 22–31
 #define IDT_EXCEPTION_RESERVED_MAX     31   // Last reserved exception vector
+//
+#define IDT_ENTRY(offset, attribute)                                           \
+    {.offset_1 = (offset) & 0xffff,                                            \
+     .selector = 1,                                                            \
+     .ist = 0,                                                                 \
+     .type_attributes = IDT_PRESENT | attribute,                               \
+     .offset_2 = ((offset) >> 16) & 0xffff,                                    \
+     .offset_3 = ((offset) >> 32),                                             \
+     .zero = 0}
+
+// @TODO make macro for both these fuckers
+#define IDT_TRAP_ENTRY(offset) IDT_ENTRY(offset, IDT_TRAP_GATE)
+
+#define IDT_INTR_ENTRY(offset) IDT_ENTRY(offset, IDT_INTR_GATE)
+
 
 #endif

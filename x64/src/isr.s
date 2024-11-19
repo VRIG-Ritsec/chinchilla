@@ -175,3 +175,9 @@ global isr_21
 isr_21:
     isr_entry_error 21              ; Exception number 21 (Control Protection Exception)
 
+global isr_22
+isr_22:
+    isr_entry_error 22              ; Exception number 22 (Min)
+global isr_31
+isr_31:
+    isr_entry_error 31              ; Exception number 31 (Max)

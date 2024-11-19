@@ -78,7 +78,7 @@ struct idtr{
 
 // @TODO Why does selector need to be 8 
 #define IDT_ENTRY(offset, attribute)                                           \
-    {.offset_1 = (offset) & 0xffff,                                            \
+    (struct idt64){.offset_1 = (offset) & 0xffff,                                            \
      .selector = 8,                                                            \
      .ist = 0,                                                                 \
      .type_attributes = IDT_PRESENT | attribute,                               \
@@ -121,5 +121,37 @@ struct isr_save_state{
     struct iret_stack iret_stack;
 };
 
+#define EXCEPTION_ENTRY(exception_number) EXPAND_AND_CONCAT(isr_, exception_number)
+#define EXCEPTION_ENTRY_PTR(exception_number) (&EXCEPTION_ENTRY(exception_number))
+
+// External function declarations for each exception vector
+extern void EXCEPTION_ENTRY(IDT_DIVIDE_ERROR)(void);
+extern void EXCEPTION_ENTRY(IDT_DEBUG)(void);
+extern void EXCEPTION_ENTRY(IDT_NMI_INTERRUPT)(void);
+extern void EXCEPTION_ENTRY(IDT_BREAKPOINT)(void);
+extern void EXCEPTION_ENTRY(IDT_OVERFLOW)(void);
+extern void EXCEPTION_ENTRY(IDT_BOUND_RANGE_EXCEEDED)(void);
+extern void EXCEPTION_ENTRY(IDT_INVALID_OPCODE)(void);
+extern void EXCEPTION_ENTRY(IDT_DEVICE_NOT_AVAILABLE)(void);
+extern void EXCEPTION_ENTRY(IDT_DOUBLE_FAULT)(void);
+extern void EXCEPTION_ENTRY(IDT_COPROCESSOR_SEGMENT_OVERRUN)(void);
+extern void EXCEPTION_ENTRY(IDT_INVALID_TSS)(void);
+extern void EXCEPTION_ENTRY(IDT_SEGMENT_NOT_PRESENT)(void);
+extern void EXCEPTION_ENTRY(IDT_STACK_SEGMENT_FAULT)(void);
+extern void EXCEPTION_ENTRY(IDT_GENERAL_PROTECTION_FAULT)(void);
+extern void EXCEPTION_ENTRY(IDT_PAGE_FAULT)(void);
+extern void EXCEPTION_ENTRY(IDT_RESERVED)(void);
+extern void EXCEPTION_ENTRY(IDT_X87_FLOATING_POINT_ERROR)(void);
+extern void EXCEPTION_ENTRY(IDT_ALIGNMENT_CHECK)(void);
+extern void EXCEPTION_ENTRY(IDT_MACHINE_CHECK)(void);
+extern void EXCEPTION_ENTRY(IDT_SIMD_FLOATING_POINT_ERROR)(void);
+extern void EXCEPTION_ENTRY(IDT_VIRTUALIZATION_EXCEPTION)(void);
+extern void EXCEPTION_ENTRY(IDT_CONTROL_PROTECTION_EXCEPTION)(void);
+
+// External declarations for reserved exception vectors (22-31)
+extern void EXCEPTION_ENTRY(IDT_EXCEPTION_RESERVED_MIN)(void);
+extern void EXCEPTION_ENTRY(IDT_EXCEPTION_RESERVED_MAX)(void);
+
+void init_idt(void);
 
 #endif

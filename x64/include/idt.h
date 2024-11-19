@@ -91,4 +91,22 @@ struct idtr{
 #define IDT_INTR_ENTRY(offset) IDT_ENTRY(offset, IDT_INTR_GATE)
 
 
+struct isr_save_state{
+    u64 r15;
+    u64 r14;
+    u64 r13;
+    u64 r12;
+    u64 r11;
+    u64 r10;
+    u64 r9;
+    u64 r8;
+    u64 rbp;
+    u64 rax;
+    u64 rbx;
+    u64 rcx;
+    u64 rdx;
+    u64 rsi;
+    u64 rdi;
+};
+
 #endif

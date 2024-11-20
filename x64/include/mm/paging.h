@@ -1,14 +1,14 @@
 #ifndef __PAGING_H
 #define __PAGING_H
 
-#include "types.h"
-#include "list.h"
+#include "utils/types.h"
+#include "utils/list.h"
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "printf.h"
-#include "multiboot.h"
-#include "kernel32.h"
+#include "utils/printf.h"
+#include "kernel/multiboot.h"
+#include "kernel/kernel32.h"
 
 #define PAGE_SHIFT 12 
 #define PAGE_SIZE (1<< PAGE_SHIFT)

@@ -1,9 +1,9 @@
-#include "buddy.h"
-#include "log.h"
-#include "multiboot.h"
-#include "paging.h"
-#include "printf.h"
-#include "idt.h"
+#include "mm/buddy.h"
+#include "utils/log.h"
+#include "kernel/multiboot.h"
+#include "mm/paging.h"
+#include "utils/printf.h"
+#include "irq/idt.h"
 #include <stdbool.h>
 #include <stdint.h>
 

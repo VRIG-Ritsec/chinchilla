@@ -79,7 +79,7 @@ extern isr_handler
     mov rsp, rbx  ; restore saved ret + iret stack
     RESTORE_REGS 
     add rsp, 8
-    iret
+    iretq
 %endmacro
 
 %macro isr_entry_no_error 1

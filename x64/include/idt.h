@@ -118,6 +118,7 @@ struct isr_save_state{
     u64 rdx;
     u64 rsi;
     u64 rdi;
+    u64 error_code;
     struct iret_stack iret_stack;
 };
 

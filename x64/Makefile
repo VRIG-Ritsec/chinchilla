@@ -14,27 +14,27 @@ OBJECTS = $(addprefix $(OUT_DIR)/, $(addsuffix .o, $(TARGETS)))
 
 all: kernel64
 
-main: $(SRC_DIR)/main.c
+main: $(SRC_DIR)/init/main.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding
 
-start: $(SRC_DIR)/start.s
+start: $(SRC_DIR)/init/start.s
 	nasm $(CFLAGS) -felf64 -o $(OUT_DIR)/$@.o $<
 
-helper: $(SRC_DIR)/helper.s
+helper: $(SRC_DIR)/utils/helper.s
 	nasm -felf64 -o $(OUT_DIR)/$@.o $<
 
-printf: $(SRC_DIR)/printf.c
+printf: $(SRC_DIR)/utils/printf.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $<  -c -I include -ffreestanding
-paging: $(SRC_DIR)/paging.c
+paging: $(SRC_DIR)/mm/paging.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding
-buddy: $(SRC_DIR)/buddy.c
+buddy: $(SRC_DIR)/mm/buddy.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
-string: $(SRC_DIR)/string.c
+string: $(SRC_DIR)/utils/string.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
-idt: $(SRC_DIR)/idt.c
+idt: $(SRC_DIR)/irq/idt.c
 	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
 
-isr: $(SRC_DIR)/isr.s
+isr: $(SRC_DIR)/irq/isr.s
 	nasm -felf64 -o $(OUT_DIR)/$@.o $<
 
 kernel64: $(TARGETS) 

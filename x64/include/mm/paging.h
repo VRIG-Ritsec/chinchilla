@@ -22,8 +22,6 @@
 #define PG_RW      (1<<1)
 #define PG_PS      (1<<7) // for block addressing
 
-
-
 // Align it so we can fit equally in pages so each page can hold the same amount 
 struct __attribute__((aligned(32))) page_struct{
     u64 flags; 

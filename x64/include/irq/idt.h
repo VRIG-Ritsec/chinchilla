@@ -1,5 +1,5 @@
 /*
- * include/idt.h 
+ * include/irq/idt.h 
  * Interrupt Descriptor Table structures and values
 */
 
@@ -9,21 +9,21 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "types.h"
-#include "paging.h"
-#include "list.h"
+#include "utils/types.h"
+#include "mm/paging.h"
+#include "utils/list.h"
 
-#include "printf.h"
-#include "multiboot.h"
-#include "kernel32.h"
-#include "assert.h"
-#include "math.h"
+#include "utils/printf.h"
+#include "kernel/multiboot.h"
+#include "kernel/kernel32.h"
+#include "utils/assert.h"
+#include "utils/math.h"
 
-#include "assert.h"
-#include "kernel.h"
-#include "list.h"
-#include "paging.h"
-#include "buddy.h"
+#include "utils/assert.h"
+#include "kernel/kernel.h"
+#include "utils/list.h"
+#include "mm/paging.h"
+#include "mm/buddy.h"
 
 
 // Various bits that the IDT requires

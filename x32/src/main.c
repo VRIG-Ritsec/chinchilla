@@ -2,6 +2,7 @@
 #include "multiboot.h"
 #include "paging.h"
 #include "printf.h"
+#include "pic.h"
 #include <stdint.h>
 
 typedef uint8_t u8;
@@ -69,5 +70,8 @@ int main(multiboot_info_t *multiboot_info) {
 
     printf("[+] Attempting to enter long mode\n");
     enter_long_mode(pgdir, &info);
+    // remap as despite being disabled hardware could still send a signal
+    PIC_remap(0x20, 0x28);
+    pic_disable();
     return 0;
 }

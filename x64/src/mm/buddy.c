@@ -1,4 +1,4 @@
-#include "buddy.h"
+#include "mm/buddy.h"
 
 struct free_area free_area = {0};
 

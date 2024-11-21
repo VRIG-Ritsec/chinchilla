@@ -1,7 +1,7 @@
 #ifndef __LINK_LIST
 #define __LINK_LIST
 
-#include "kernel.h"
+#include "kernel/kernel.h"
 
 struct list_head {
     struct list_head *prev;

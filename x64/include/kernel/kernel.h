@@ -1,7 +1,7 @@
 #ifndef __KERNEL_H
 #define __KERNEL_H
 
-#include "types.h"
+#include "utils/types.h"
 
 #define ARRAY_LEN(array) (sizeof(array) / sizeof((array[0])))
 

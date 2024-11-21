@@ -4,15 +4,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "assert.h"
-#include "kernel32.h"
-#include "list.h"
-#include "log.h"
-#include "math.h"
-#include "multiboot.h"
-#include "paging.h"
-#include "string.h"
-#include "types.h"
+#include "utils/assert.h"
+#include "kernel/kernel32.h"
+#include "utils/list.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "kernel/multiboot.h"
+#include "mm/paging.h"
+#include "utils/string.h"
+#include "utils/types.h"
 
 // These are the same but second one is more efficent
 /*#define ORDER_TO_SIZE(order) (PAGE_SIZE * 2 ** order)*/

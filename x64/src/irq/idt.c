@@ -1,6 +1,6 @@
-#include "buddy.h"
-#include "idt.h"
-#include "paging.h"
+#include "mm/buddy.h"
+#include "irq/idt.h"
+#include "mm/paging.h"
 
 struct idt64 *idt64;
 

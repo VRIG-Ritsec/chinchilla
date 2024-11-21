@@ -1,7 +1,6 @@
 #ifndef __PAGING_H
 #define __PAGING_H
 
-void *init_page_table();
 
 #define PG_PRESENT (1 << 0)
 #define PG_RW (1 << 1)
@@ -13,5 +12,7 @@ void *init_page_table();
 // creates valid entires for page table's
 #define PGD_ENTRY(val) (val | PG_PRESENT | PG_RW)
 #define PUD_ENTRY(val) (val | PG_PRESENT | PG_RW | PG_PS)
+
+void *init_page_table();
 
 #endif

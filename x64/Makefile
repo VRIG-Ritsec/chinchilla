@@ -1,45 +1,27 @@
-SRC_DIR = src
-OUT_DIR = build
+export CURRENT_DIR := $(shell pwd)
 
-TOOLCHAIN32 =  ../toolchain/i686/bin
-TOOLCHAIN64 =  ../toolchain/x86_64/bin
-CC32 = $(TOOLCHAIN32)/i686-elf-gcc
-CC64 = $(TOOLCHAIN64)/x86_64-elf-gcc
+export INCLUDE_DIR = $(CURRENT_DIR)/include
+export SRC_DIR := $(CURRENT_DIR)/src
+export BUILD_DIR := $(CURRENT_DIR)/build
+export CFLAGS = -g -I $(INCLUDE_DIR) -c -ffreestanding
+export LDFLAGS = -T $(CURRENT_DIR)/linker.ld -std=gnu99 -O2 -Wall -Wextra -nostdlib -m64 -fno-pie -lgcc
+export ASMFLAGS = -felf64
+export CC:=$(CC64)
 
-CFLAGS = -g
-
-TARGETS = main start helper printf paging buddy string idt isr
-OBJECTS = $(addprefix $(OUT_DIR)/, $(addsuffix .o, $(TARGETS)))
-
-
-all: kernel64
-
-main: $(SRC_DIR)/init/main.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding
-
-start: $(SRC_DIR)/init/start.s
-	nasm $(CFLAGS) -felf64 -o $(OUT_DIR)/$@.o $<
-
-helper: $(SRC_DIR)/utils/helper.s
-	nasm -felf64 -o $(OUT_DIR)/$@.o $<
-
-printf: $(SRC_DIR)/utils/printf.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $<  -c -I include -ffreestanding
-paging: $(SRC_DIR)/mm/paging.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding
-buddy: $(SRC_DIR)/mm/buddy.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
-string: $(SRC_DIR)/utils/string.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
-idt: $(SRC_DIR)/irq/idt.c
-	$(CC64) $(CFLAGS) -o $(OUT_DIR)/$@.o $< -c -I include -ffreestanding 
-
-isr: $(SRC_DIR)/irq/isr.s
-	nasm -felf64 -o $(OUT_DIR)/$@.o $<
-
-kernel64: $(TARGETS) 
-	$(CC64) -T linker.ld -o $(OUT_DIR)/$@ -std=gnu99 -ffreestanding -O2 -Wall -Wextra -nostdlib -m64 -fno-pie $(OBJECTS) -lgcc
+OBJECTS := $(shell find $(BUILD_DIR) -name '*.o')
 
 
+
+kernel64: src | $(BUILD_DIR)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS)
+
+.PHONY: src
+src:
+	make -C src
+
+.PHONY: clean
 clean:
-	rm -rf $(OUT_DIR)/*
+	rm -rf $(BUILD_DIR)
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)

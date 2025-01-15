@@ -29,10 +29,8 @@ int main64(struct kernel_32_info *ptr) {
     multiboot_info_t multiboot_info =
         *(multiboot_info_t *)(uint64_t)info.multiboot_info;
     init_memory(&info, &multiboot_info);
-    PINFO("Memory Successfully initialized\n");
-    print_welcome_banner();
     init_idt();
-    asm("int3");
+    print_welcome_banner();
     for (;;) {
     }
 }

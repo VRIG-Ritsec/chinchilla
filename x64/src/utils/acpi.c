@@ -51,7 +51,7 @@ u64 find_rsdp(){
     return 0;
 }
 
-u64 find_apic(){
+struct RSDT * find_fadt(){
     struct RSDP_t * rsdp = (struct RSDP_t*)find_rsdp();
     // version 1 aka rsdp
     if(rsdp->Revision == 0){
@@ -62,7 +62,15 @@ u64 find_apic(){
         ASSERT(!xsdp_checksum(xsdp), "XSDP invalid checksum");
     }
 
-    // valid tables just interpret as RSDP 
-    u64 rsdt = rsdp->RsdtAddress;
+    struct RSDT * rsdt = (struct RSDT*)(u64)rsdp->RsdtAddress;
+
+    u32 entries = (rsdt->header.Length - sizeof(struct ACPISDTHeader)) / 4;
+    for(u32 i = 0; i < entries; i++){
+        struct ACPISDTHeader *entry = (struct ACPISDTHeader *)(u64)rsdt->SDT_pointers[i];
+        if(!memcmp(entry->Signature, "FACP", 4)){
+            PINFO("FOUND FACP: %#lx\n", entry);
+            return (struct RSDT*)entry;
+        }
+    }
     return 0;
 }

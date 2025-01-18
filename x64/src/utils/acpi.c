@@ -1,9 +1,12 @@
 #include "utils/acpi.h"
+#include "utils/log.h"
 
 // EBDA address found here https://wiki.osdev.org/Memory_Map_(x86)#Overview
 #define EBDA_START 0x80000
 #define RSDP_HEADER "RSD PTR "
 #define RSDP_HEADER_LENGTH (sizeof(RSDP_HEADER) - 1)
+#define FADT_HEADER "FACP"
+#define FADT_HEADER_LENGTH (sizeof(FADT_HEADER)-1) 
 
 
 // https://wiki.osdev.org/RSDP#Checksum_validation
@@ -51,7 +54,7 @@ u64 find_rsdp(){
     return 0;
 }
 
-struct RSDT * find_fadt(){
+struct FADT * find_fadt(){
     struct RSDP_t * rsdp = (struct RSDP_t*)find_rsdp();
     // version 1 aka rsdp
     if(rsdp->Revision == 0){
@@ -67,10 +70,21 @@ struct RSDT * find_fadt(){
     u32 entries = (rsdt->header.Length - sizeof(struct ACPISDTHeader)) / 4;
     for(u32 i = 0; i < entries; i++){
         struct ACPISDTHeader *entry = (struct ACPISDTHeader *)(u64)rsdt->SDT_pointers[i];
-        if(!memcmp(entry->Signature, "FACP", 4)){
-            PINFO("FOUND FACP: %#lx\n", entry);
-            return (struct RSDT*)entry;
+        if(!memcmp(entry->Signature, FADT_HEADER, FADT_HEADER_LENGTH)){
+            /*PINFO("FOUND FACP: %#lx\n", entry);*/
+            return (struct FADT*)entry;
         }
     }
-    return 0;
+    return NULL;
+}
+
+bool enable_acpi_mode(){
+    // https://wiki.osdev.org/ACPI#Switching_to_ACPI_Mode
+    struct FADT * fadt = find_fadt();
+    ASSERT(fadt == NULL, "FADT NOT FOUND\n");
+    // write acpi_enable to SMI command field
+    outb(fadt->SMI_CommandPort, fadt->AcpiEnable);
+    while ((inw(fadt->PM1aControlBlock) & 1) == 0);
+    PINFO("ACPI Initialized Successfully\n");
+    return 1;
 }

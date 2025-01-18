@@ -122,5 +122,5 @@ struct FADT
 };
 bool enable_acpi_mode();
 extern void outb(u8, u8);
-extern u8 inw(u8);
+extern u32 inw(u32);
 #endif

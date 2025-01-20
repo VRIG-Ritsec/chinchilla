@@ -14,3 +14,10 @@ u8 memcmp(void *s1, void * s2, u8 length){
     }
     return 0;
 }
+
+u64 strlen(char *str){
+    u64 i = -1;
+    while(str[++i]){
+    }
+    return i;
+}

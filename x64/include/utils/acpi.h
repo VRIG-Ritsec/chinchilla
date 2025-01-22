@@ -118,7 +118,95 @@ struct FADT {
     struct lame_address_struct X_GPE0Block;
     struct lame_address_struct X_GPE1Block;
 };
-bool enable_acpi_mode();
+
+struct MADT{
+    struct ACPISDTHeader h;
+    u32 apci_address;
+    u32 flags;
+};
+
+// Entry type's in APIC 
+#define ET_PROCESSOR_APIC 0
+#define ET_IO_APIC 1 
+#define ET_IO_INT_APIC 2 
+#define ET_IO_NON_MASK_INT_SRC_APIC 3 
+#define ET_IO_NON_MASK_INT_APIC 4
+#define ET_ADDR_OVERRIDE_APIC 5 
+#define ET_x2APIC 9
+
+// Flags for the various APIC entires
+#define APIC_CPU_ENABLED (1)
+#define APIC_ONLINE_CAP (1<<1)
+
+// Common header structure for all MADT entries
+struct madt_header {
+    u8 type;   // Entry type
+    u8 length; // Length of the entry
+} __attribute__((packed));
+
+// Processor Local APIC Entry
+struct processor_local_apic_entry {
+    struct madt_header header; // Common header
+    u8 acpi_processor_id;      // ACPI Processor ID
+    u8 apic_id;                // APIC ID
+    u32 flags;                 // Flags: bit 0 = Enabled, bit 1 = Online Capable
+} __attribute__((packed));
+
+// I/O APIC Entry
+struct io_apic_entry {
+    struct madt_header header; // Common header
+    u8 io_apic_id;             // I/O APIC ID
+    u8 reserved;               // Reserved (0)
+    u32 io_apic_address;       // I/O APIC Address
+    u32 global_interrupt_base; // Global System Interrupt Base
+} __attribute__((packed));
+
+// I/O APIC Interrupt Source Override Entry
+struct io_apic_interrupt_source_override_entry {
+    struct madt_header header; // Common header
+    u8 bus_source;             // Bus Source
+    u8 irq_source;             // IRQ Source
+    u32 global_interrupt;      // Global System Interrupt
+    u16 flags;                 // Flags: trigger mode, polarity
+} __attribute__((packed));
+
+// I/O APIC Non-Maskable Interrupt Source Entry
+struct io_apic_nmi_source_entry {
+    struct madt_header header; // Common header
+    u8 nmi_source;             // NMI Source
+    u8 reserved;               // Reserved
+    u16 flags;                 // Flags: trigger mode, polarity
+    u32 global_interrupt;      // Global System Interrupt
+} __attribute__((packed));
+
+// Local APIC Non-Maskable Interrupts Entry
+struct local_apic_nmi_entry {
+    struct madt_header header; // Common header
+    u8 acpi_processor_id;      // ACPI Processor ID (0xFF for all processors)
+    u16 flags;                 // Flags: trigger mode, polarity
+    u8 lint_number;            // LINT# (0 or 1)
+} __attribute__((packed));
+
+// Local APIC Address Override Entry
+struct local_apic_address_override_entry {
+    struct madt_header header; // Common header
+    u16 reserved;              // Reserved
+    u64 local_apic_address;    // 64-bit physical address of Local APIC
+} __attribute__((packed));
+
+// Processor Local x2APIC Entry
+struct processor_local_x2apic_entry {
+    struct madt_header header; // Common header
+    u16 reserved;              // Reserved
+    u32 x2apic_id;             // Processor's Local x2APIC ID
+    u32 flags;                 // Flags: bit 0 = Enabled, bit 1 = Online Capable
+    u32 acpi_processor_id;     // ACPI Processor ID
+} __attribute__((packed));
+
+
+
+
+u64 get_apic_addr();
 extern void outb(u8, u8);
 extern u32 inw(u32);
 #endif

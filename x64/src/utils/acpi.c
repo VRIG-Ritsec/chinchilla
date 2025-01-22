@@ -1,4 +1,5 @@
 #include "utils/acpi.h"
+#include "utils/assert.h"
 #include "utils/log.h"
 
 // EBDA address found here https://wiki.osdev.org/Memory_Map_(x86)#Overview
@@ -7,6 +8,8 @@
 #define RSDP_HEADER_LENGTH (sizeof(RSDP_HEADER) - 1)
 #define FADT_HEADER "FACP"
 #define FADT_HEADER_LENGTH (sizeof(FADT_HEADER) - 1)
+#define MADT_HEADER "APIC"
+#define MADT_HEADER_LENGTH (sizeof(MADT_HEADER) - 1)
 
 // https://wiki.osdev.org/RSDP#Checksum_validation
 bool rsdp_checksum(struct RSDP_t *rsdp) {
@@ -51,7 +54,7 @@ u64 find_rsdp() {
     return 0;
 }
 
-struct FADT *find_fadt() {
+struct MADT *find_madt() {
     struct RSDP_t *rsdp = (struct RSDP_t *)find_rsdp();
     // version 1 aka rsdp
     if (rsdp->Revision == 0) {
@@ -68,22 +71,42 @@ struct FADT *find_fadt() {
     for (u32 i = 0; i < entries; i++) {
         struct ACPISDTHeader *entry =
             (struct ACPISDTHeader *)(u64)rsdt->SDT_pointers[i];
-        if (!memcmp(entry->Signature, FADT_HEADER, FADT_HEADER_LENGTH)) {
-            /*PINFO("FOUND FACP: %#lx\n", entry);*/
-            return (struct FADT *)entry;
+        if (!memcmp(entry->Signature, MADT_HEADER, MADT_HEADER_LENGTH)) {
+            PINFO("FOUND %s: %#lx\n", MADT_HEADER, entry);
+            return (struct MADT *)entry;
         }
     }
     return NULL;
 }
 
-bool enable_acpi_mode() {
+u64 get_apic_addr() {
     // https://wiki.osdev.org/ACPI#Switching_to_ACPI_Mode
-    struct FADT *fadt = find_fadt();
-    ASSERT(fadt == NULL, "FADT NOT FOUND\n");
-    // write acpi_enable to SMI command field
-    outb(fadt->SMI_CommandPort, fadt->AcpiEnable);
-    while ((inw(fadt->PM1aControlBlock) & 1) == 0)
-        ;
-    PINFO("ACPI Initialized Successfully\n");
-    return 1;
+    struct MADT *madt = find_madt();
+    ASSERT(madt == NULL, "MADT Not found");
+    void *madt_end = madt + madt->h.Length;
+    // get the end of the madt struct which is start of apic entries
+    struct madt_header *madt_cursor = (struct madt_header *)(madt + 1);
+    while ((void *)madt_cursor < madt_end) {
+        printf("Processin type %d of length %d\n", madt_cursor->type, madt_cursor->length);
+        switch (madt_cursor->type) {
+        case ET_PROCESSOR_APIC:
+            struct processor_local_apic_entry *processor_apic =
+                (struct processor_local_apic_entry *)madt_cursor;
+            if (processor_apic->flags & APIC_CPU_ENABLED) {
+                printf("Processor %d is enabled", processor_apic->acpi_processor_id);
+            } 
+            if (!(processor_apic->flags & APIC_ONLINE_CAP)) {
+                printf("Processor %d is not capable of being turned on",
+                        processor_apic->apic_id);
+            }
+            madt_cursor = (struct madt_header *)(processor_apic + 1);
+            break;
+        case ET_IO_APIC:
+            break;
+        case ET_ADDR_OVERRIDE_APIC:
+            break;
+        }
+    }
+
+    return madt->apci_address;
 }
